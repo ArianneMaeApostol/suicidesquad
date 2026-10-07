@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404 - Page Not Found - AquaFlow WRSMS</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="404">
+  <div style="text-align: center; max-width: 520px; background-color: var(--bg-surface); padding: var(--space-8); border-radius: var(--radius-xl); border: 1px solid var(--border-color); box-shadow: var(--shadow-lg);">
+    <!-- Water Drop 404 Custom Inline SVG Illustration -->
+    <div style="width: 140px; height: 140px; margin: 0 auto var(--space-4); display: flex; align-items: center; justify-content: center;">
+      <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Water Droplet Outline -->
+        <path d="M60 10C60 10 25 50 25 75C25 94.33 40.67 110 60 110C79.33 110 95 94.33 95 75C95 50 60 10 60 10Z" fill="url(#drop-grad)" filter="drop-shadow(0 8px 16px rgba(0, 119, 182, 0.25))"/>
+        <!-- Sad/Confused Face -->
+        <!-- Eyes -->
+        <circle cx="48" cy="70" r="4" fill="#023E8A"/>
+        <circle cx="72" cy="70" r="4" fill="#023E8A"/>
+        <!-- Sad Mouth -->
+        <path d="M52 86C56 82 64 82 68 86" stroke="#023E8A" stroke-width="3" stroke-linecap="round"/>
+        <!-- Water Ripple lines -->
+        <ellipse cx="60" cy="112" rx="35" ry="4" fill="#90E0EF" opacity="0.6"/>
+        <defs>
+          <linearGradient id="drop-grad" x1="60" y1="10" x2="60" y2="110" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#90E0EF"/>
+            <stop offset="0.55" stop-color="#00B4D8"/>
+            <stop offset="1" stop-color="#0077B6"/>
+          </linearGradient>
+        </defs>
+      </svg>
+    </div>
+
+    <div style="font-family: monospace; font-size: 1.1rem; font-weight: 700; color: var(--primary); margin-bottom: var(--space-2);">
+      ERROR 404 • NATUYUAN ANG GRIPO
+    </div>
+
+    <h1 style="font-family: var(--font-heading); font-size: 1.8rem; font-weight: 800; color: var(--text-main); margin-bottom: var(--space-3); line-height: 1.2;">
+      Oops! Page Not Found
+    </h1>
+
+    <p style="font-size: 0.92rem; color: var(--text-muted); margin-bottom: var(--space-6); line-height: 1.6;">
+      The station slip, customer record, or screen you are looking for seems to have evaporated or moved to another branch. Let's get you back to the main station terminal.
+    </p>
+
+    <div style="display: flex; gap: var(--space-3); justify-content: center; flex-wrap: wrap;">
+      <a href="dashboard.html" class="btn btn-primary">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <span>Back to Dashboard</span>
+      </a>
+      <a href="pos.html" class="btn btn-secondary">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/></svg>
+        <span>Open POS Terminal</span>
+      </a>
+    </div>
+
+    <div style="margin-top: var(--space-8); padding-top: var(--space-4); border-top: 1px solid var(--border-color); font-size: 0.78rem; color: var(--text-muted);">
+      AquaFlow Water Refilling Station Management System • Philippines
+    </div>
+  </div>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

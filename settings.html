@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Station Settings - AquaFlow WRSMS</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="settings">
+  <input type="checkbox" id="theme-toggle" class="toggle-checkbox" aria-label="Toggle Dark Mode">
+  <input type="checkbox" id="nav-toggle" class="toggle-checkbox" aria-label="Toggle Mobile Navigation">
+
+  <div class="app-layout">
+    <label for="nav-toggle" class="sidebar-backdrop" aria-hidden="true"></label>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <a href="dashboard.html" class="brand-link">
+          <div class="brand-logo-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+          </div>
+          <span>AquaFlow WRSMS</span>
+        </a>
+        <label for="nav-toggle" class="sidebar-close-btn" aria-label="Close menu">&times;</label>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div>
+          <div class="nav-group-title">Core Operations</div>
+          <ul class="nav-list">
+            <li>
+              <a href="dashboard.html" class="nav-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                <span>Dashboard</span>
+              </a>
+            </li>
+            <li>
+              <a href="pos.html" class="nav-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                <span>Point of Sale (POS)</span>
+              </a>
+            </li>
+            <li>
+              <a href="deliveries.html" class="nav-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                <span>Deliveries</span>
+                <span class="nav-badge danger">18</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <div class="nav-group-title">Station Management</div>
+          <ul class="nav-list">
+            <li>
+              <a href="customers.html" class="nav-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                <span>Customers</span>
+              </a>
+            </li>
+            <li>
+              <a href="inventory.html" class="nav-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                <span>Stock & Inventory</span>
+              </a>
+            </li>
+            <li>
+              <a href="maintenance.html" class="nav-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+                <span>Machine Maintenance</span>
+              </a>
+            </li>
+            <li>
+              <a href="expenses.html" class="nav-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                <span>Expenses & Cash</span>
+              </a>
+            </li>
+            <li>
+              <a href="reports.html" class="nav-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                <span>Reports & Analytics</span>
+              </a>
+            </li>
+            <li>
+              <a href="settings.html" class="nav-link" aria-current="page">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                <span>Station Settings</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <div class="sidebar-user">
+        <div class="avatar avatar-sm">MS</div>
+        <div class="user-info">
+          <div class="user-name">Maria Santos</div>
+          <div class="user-role">Head Cashier • Shift A</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="app-main">
+      <header class="topbar">
+        <div class="topbar-left">
+          <label for="nav-toggle" class="mobile-menu-btn" aria-label="Open mobile menu">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </label>
+          <div class="topbar-breadcrumb">
+            <a href="dashboard.html">Station</a>
+            <span class="divider">/</span>
+            <span class="current">Station Profile, Pricing & Role Permissions</span>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <label for="theme-toggle" class="theme-toggle-label" title="Toggle Light/Dark Theme">
+            <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+            <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          </label>
+        </div>
+      </header>
+
+      <main class="content-area">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Station Configuration & Master Settings</h1>
+            <p class="page-subtitle">Configure business credentials, default price lists, user security roles, and automated switches.</p>
+          </div>
+          <div class="header-actions">
+            <button type="button" class="btn btn-primary">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+              <span>Save Changes</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- SECTION 1: STATION PROFILE -->
+        <div class="card" style="margin-bottom: var(--space-6);">
+          <div class="card-header">
+            <h3 class="card-title">1. Station Legal Profile & Business Information</h3>
+          </div>
+          <div class="card-body">
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label" for="st-name">Station Business Name <span class="required">*</span></label>
+                <input type="text" id="st-name" class="form-control" value="AquaFlow Pure Water Station (Branch 01)">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="st-tin">BIR Taxpayer Identification (TIN) <span class="required">*</span></label>
+                <input type="text" id="st-tin" class="form-control" value="294-819-204-000">
+              </div>
+            </div>
+
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label" for="st-permit">DOH Sanitary Permit No.</label>
+                <input type="text" id="st-permit" class="form-control" value="DOH-NCR-PASIG-2026-0814">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="st-phone">Station Hotline / Mobile</label>
+                <input type="tel" id="st-phone" class="form-control" value="0917-888-AQUA / (02) 8642-1920">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="st-addr">Station Physical Address</label>
+              <input type="text" id="st-addr" class="form-control" value="124 Caruncho Ave, Brgy. San Antonio, Pasig City, Metro Manila">
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION 2: PRICE LIST CONFIG -->
+        <div class="card" style="margin-bottom: var(--space-6);">
+          <div class="card-header">
+            <h3 class="card-title">2. Master Pricing & Product List (Philippine Peso ₱)</h3>
+          </div>
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Product Name</th>
+                  <th>Type</th>
+                  <th>Walk-in Retail Price</th>
+                  <th>Reseller / Store Price</th>
+                  <th>Delivery Surcharge</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>5-Gal Round Blue Container Refill</strong></td>
+                  <td>Purified Water</td>
+                  <td>₱30.00</td>
+                  <td>₱25.00</td>
+                  <td>Free (&ge; 3 gals)</td>
+                </tr>
+                <tr>
+                  <td><strong>5-Gal Slim Container with Tap Refill</strong></td>
+                  <td>Purified Water</td>
+                  <td>₱35.00</td>
+                  <td>₱30.00</td>
+                  <td>Free (&ge; 3 gals)</td>
+                </tr>
+                <tr>
+                  <td><strong>5-Gal Alkaline Hydro-Mineral Refill</strong></td>
+                  <td>Alkaline pH 9.5</td>
+                  <td>₱50.00</td>
+                  <td>₱45.00</td>
+                  <td>Free (&ge; 3 gals)</td>
+                </tr>
+                <tr>
+                  <td><strong>Brand New 5-Gal Polycarbonate Container</strong></td>
+                  <td>Container Deposit / Sale</td>
+                  <td>₱220.00</td>
+                  <td>₱200.00</td>
+                  <td>₱0.00</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- SECTION 3: ROLES & PERMISSIONS MATRIX TABLE -->
+        <div class="card" style="margin-bottom: var(--space-6);">
+          <div class="card-header">
+            <h3 class="card-title">3. Users, Security & Roles Permissions Matrix</h3>
+          </div>
+          <div class="table-responsive">
+            <table class="table" style="text-align: center;">
+              <thead>
+                <tr>
+                  <th style="text-align: left;">System Capability / Feature</th>
+                  <th>Owner</th>
+                  <th>Station Manager</th>
+                  <th>Counter Cashier</th>
+                  <th>Delivery Rider</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="text-align: left;">Point of Sale & Record Refill</td>
+                  <td><span class="badge badge-success">&#10003; Full</span></td>
+                  <td><span class="badge badge-success">&#10003; Full</span></td>
+                  <td><span class="badge badge-success">&#10003; Full</span></td>
+                  <td><span class="badge badge-neutral">No</span></td>
+                </tr>
+                <tr>
+                  <td style="text-align: left;">Customer Management & Lending Ledger</td>
+                  <td><span class="badge badge-success">&#10003; Full</span></td>
+                  <td><span class="badge badge-success">&#10003; Full</span></td>
+                  <td><span class="badge badge-info">View / Add</span></td>
+                  <td><span class="badge badge-neutral">No</span></td>
+                </tr>
+                <tr>
+                  <td style="text-align: left;">Rider Dispatch Board & Remittance</td>
+                  <td><span class="badge badge-success">&#10003; Full</span></td>
+                  <td><span class="badge badge-success">&#10003; Full</span></td>
+                  <td><span class="badge badge-success">&#10003; Full</span></td>
+                  <td><span class="badge badge-info">Trip Status</span></td>
+                </tr>
+                <tr>
+                  <td style="text-align: left;">Expense Recording & Cash Disbursement</td>
+                  <td><span class="badge badge-success">&#10003; Full</span></td>
+                  <td><span class="badge badge-success">&#10003; Full</span></td>
+                  <td><span class="badge badge-info">Petty Cash Only</span></td>
+                  <td><span class="badge badge-neutral">No</span></td>
+                </tr>
+                <tr>
+                  <td style="text-align: left;">Financial Profit Reports & BIR Export</td>
+                  <td><span class="badge badge-success">&#10003; Full</span></td>
+                  <td><span class="badge badge-info">View Only</span></td>
+                  <td><span class="badge badge-neutral">No</span></td>
+                  <td><span class="badge badge-neutral">No</span></td>
+                </tr>
+                <tr>
+                  <td style="text-align: left;">Station Settings & Price Editing</td>
+                  <td><span class="badge badge-success">&#10003; Full</span></td>
+                  <td><span class="badge badge-neutral">No</span></td>
+                  <td><span class="badge badge-neutral">No</span></td>
+                  <td><span class="badge badge-neutral">No</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- SECTION 4: CSS AUTOMATED TOGGLE SWITCHES -->
+        <div class="card" style="margin-bottom: var(--space-6);">
+          <div class="card-header">
+            <h3 class="card-title">4. Operational Automation Preferences</h3>
+          </div>
+          <div class="card-body" style="display: flex; flex-direction: column; gap: var(--space-4);">
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              <div>
+                <strong style="font-size: 0.9rem;">Enforce Credit Limit Warning at POS</strong>
+                <div style="font-size: 0.78rem; color: var(--text-muted);">Prevent cashier from checking out utang if customer exceeds assigned limit.</div>
+              </div>
+              <label class="switch">
+                <input type="checkbox" checked>
+                <span class="switch-slider"></span>
+              </label>
+            </div>
+
+            <div style="display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--border-color); padding-top: var(--space-4);">
+              <div>
+                <strong style="font-size: 0.9rem;">Automatic Senior Citizen / PWD 20% Discount</strong>
+                <div style="font-size: 0.78rem; color: var(--text-muted);">Enable 1-click statutory discount compliance on cashier docket.</div>
+              </div>
+              <label class="switch">
+                <input type="checkbox" checked>
+                <span class="switch-slider"></span>
+              </label>
+            </div>
+
+            <div style="display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--border-color); padding-top: var(--space-4);">
+              <div>
+                <strong style="font-size: 0.9rem;">Daily Shift End Cash Drawer Reconciliation Prompt</strong>
+                <div style="font-size: 0.78rem; color: var(--text-muted);">Require head cashier to enter physical cash count before signing out.</div>
+              </div>
+              <label class="switch">
+                <input type="checkbox" checked>
+                <span class="switch-slider"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
