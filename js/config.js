@@ -7,9 +7,9 @@
 export const API_BASE_URL =
   window.__API_BASE_URL__ ||
   localStorage.getItem('wrsms_api_url') ||
-  (typeof window !== 'undefined' && window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+  (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
     ? 'http://localhost:8000'
-    : 'http://localhost:8000');
+    : 'https://suicidesquad.onrender.com');
 
 export const TOKEN_STORAGE_KEY = 'wrsms_token';
 export const USER_STORAGE_KEY = 'wrsms_user';
