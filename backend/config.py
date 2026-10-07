@@ -10,6 +10,9 @@ DATABASE_URL: str = os.getenv(
     "DATABASE_URL",
     "postgresql://postgres@localhost:5432/wrsms_db"
 )
+# Normalize postgres:// to postgresql:// for asyncpg compatibility
+if DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 JWT_SECRET: str = os.getenv("JWT_SECRET", "aquaflow-super-secret-jwt-key-2026-production-ready")
 JWT_EXPIRY_HOURS: int = int(os.getenv("JWT_EXPIRY_HOURS", "8"))
 UPLOADS_DIR: str = os.getenv("UPLOADS_DIR", "./uploads")
