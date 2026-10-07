@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Machine Maintenance & DOH Compliance - AquaFlow WRSMS</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="maintenance">
+  <input type="checkbox" id="theme-toggle" class="toggle-checkbox" aria-label="Toggle Dark Mode">
+  <input type="checkbox" id="nav-toggle" class="toggle-checkbox" aria-label="Toggle Mobile Navigation">
+
+  <div class="app-layout">
+    <label for="nav-toggle" class="sidebar-backdrop" aria-hidden="true"></label>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <a href="dashboard.html" class="brand-link">
+          <div class="brand-logo-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+          </div>
+          <span>AquaFlow WRSMS</span>
+        </a>
+        <label for="nav-toggle" class="sidebar-close-btn" aria-label="Close menu">&times;</label>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div>
+          <div class="nav-group-title">Core Operations</div>
+          <ul class="nav-list">
+            <li>
+              <a href="dashboard.html" class="nav-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                <span>Dashboard</span>
+              </a>
+            </li>
+            <li>
+              <a href="pos.html" class="nav-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                <span>Point of Sale (POS)</span>
+              </a>
+            </li>
+            <li>
+              <a href="deliveries.html" class="nav-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                <span>Deliveries</span>
+                <span class="nav-badge danger">18</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <div class="nav-group-title">Station Management</div>
+          <ul class="nav-list">
+            <li>
+              <a href="customers.html" class="nav-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                <span>Customers</span>
+              </a>
+            </li>
+            <li>
+              <a href="inventory.html" class="nav-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                <span>Stock & Inventory</span>
+              </a>
+            </li>
+            <li>
+              <a href="maintenance.html" class="nav-link" aria-current="page">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+                <span>Machine Maintenance</span>
+              </a>
+            </li>
+            <li>
+              <a href="expenses.html" class="nav-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                <span>Expenses & Cash</span>
+              </a>
+            </li>
+            <li>
+              <a href="reports.html" class="nav-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                <span>Reports & Analytics</span>
+              </a>
+            </li>
+            <li>
+              <a href="settings.html" class="nav-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                <span>Station Settings</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <div class="sidebar-user">
+        <div class="avatar avatar-sm">MS</div>
+        <div class="user-info">
+          <div class="user-name">Maria Santos</div>
+          <div class="user-role">Head Cashier • Shift A</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="app-main">
+      <header class="topbar">
+        <div class="topbar-left">
+          <label for="nav-toggle" class="mobile-menu-btn" aria-label="Open mobile menu">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </label>
+          <div class="topbar-breadcrumb">
+            <a href="dashboard.html">Station</a>
+            <span class="divider">/</span>
+            <span class="current">Equipment Maintenance & Sanitary Compliance</span>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <label for="theme-toggle" class="theme-toggle-label" title="Toggle Light/Dark Theme">
+            <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+            <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          </label>
+        </div>
+      </header>
+
+      <main class="content-area">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Machine Maintenance & DOH Compliance</h1>
+            <p class="page-subtitle">Track filtration train equipment, membrane flushes, TDS readings, and sanitary permits.</p>
+          </div>
+          <div class="header-actions">
+            <a href="#test-log-modal" class="btn btn-primary">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              <span>Log TDS / Water Test</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- EQUIPMENT GRID (6 KEY REFILLING MACHINES) -->
+        <h2 style="font-size: 1.15rem; font-weight: 700; margin-bottom: var(--space-4);">Water Filtration Train Equipment</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--space-4); margin-bottom: var(--space-6);">
+          <!-- Machine 1 -->
+          <div class="card">
+            <div class="card-header">
+              <strong style="font-size: 0.95rem;">Raw Water Booster Pump</strong>
+              <span class="badge badge-success"><span class="badge-dot"></span> Good</span>
+            </div>
+            <div class="card-body" style="font-size: 0.82rem; display: flex; flex-direction: column; gap: 6px;">
+              <div>Model: <strong>Goulds 0.75 HP Stainless</strong></div>
+              <div>Operating Pressure: <strong>45 PSI</strong></div>
+              <div>Next Routine Service: <strong>Oct 28, 2026</strong></div>
+            </div>
+            <div class="card-footer" style="font-size: 0.75rem; color: var(--text-muted);">
+              Technician: Engr. Lito Ramos
+            </div>
+          </div>
+
+          <!-- Machine 2 -->
+          <div class="card" style="border-color: var(--warning);">
+            <div class="card-header">
+              <strong style="font-size: 0.95rem;">Multi-Media Sand Filter Tank</strong>
+              <span class="badge badge-warning"><span class="badge-dot"></span> Due Today</span>
+            </div>
+            <div class="card-body" style="font-size: 0.82rem; display: flex; flex-direction: column; gap: 6px;">
+              <div>FRP Vessel: <strong>10" x 54" Pentair</strong></div>
+              <div>Media: <strong>Silica Sand & Anthracite</strong></div>
+              <div>Scheduled: <strong>Backwash at 9:00 PM closing</strong></div>
+            </div>
+            <div class="card-footer" style="font-size: 0.75rem; color: var(--warning-dark); font-weight: 600;">
+              Daily backwash protocol required
+            </div>
+          </div>
+
+          <!-- Machine 3 -->
+          <div class="card">
+            <div class="card-header">
+              <strong style="font-size: 0.95rem;">Activated Carbon Vessel</strong>
+              <span class="badge badge-success"><span class="badge-dot"></span> Good</span>
+            </div>
+            <div class="card-body" style="font-size: 0.82rem; display: flex; flex-direction: column; gap: 6px;">
+              <div>Media: <strong>Granular Coconut Carbon (Jacobi)</strong></div>
+              <div>Chlorine Adsorption: <strong>99.4% Effective</strong></div>
+              <div>Carbon Replacement: <strong>Dec 2026 (6 mos)</strong></div>
+            </div>
+            <div class="card-footer" style="font-size: 0.75rem; color: var(--text-muted);">
+              Odour & Taste Polishing
+            </div>
+          </div>
+
+          <!-- Machine 4 -->
+          <div class="card">
+            <div class="card-header">
+              <strong style="font-size: 0.95rem;">Reverse Osmosis (RO) Membrane</strong>
+              <span class="badge badge-success"><span class="badge-dot"></span> Good</span>
+            </div>
+            <div class="card-body" style="font-size: 0.82rem; display: flex; flex-direction: column; gap: 6px;">
+              <div>Vessel: <strong>4040 Dow Filmtec High Rejection</strong></div>
+              <div>Operating Pressure: <strong>160 PSI</strong></div>
+              <div>Permeate Recovery Rate: <strong>65%</strong></div>
+            </div>
+            <div class="card-footer" style="font-size: 0.75rem; color: var(--text-muted);">
+              Chemical Flush performed Oct 04
+            </div>
+          </div>
+
+          <!-- Machine 5 -->
+          <div class="card" style="border-color: var(--danger);">
+            <div class="card-header">
+              <strong style="font-size: 0.95rem;">Ultraviolet (UV) Sterilizer</strong>
+              <span class="badge badge-danger"><span class="badge-dot"></span> Overdue</span>
+            </div>
+            <div class="card-body" style="font-size: 0.82rem; display: flex; flex-direction: column; gap: 6px;">
+              <div>Capacity: <strong>12 GPM Stainless Steel Chamber</strong></div>
+              <div>Lamp Life: <strong>4,120 / 9,000 hrs</strong></div>
+              <div>Issue: <strong>Quartz Sleeve cleaning overdue by 3 days</strong></div>
+            </div>
+            <div class="card-footer" style="font-size: 0.75rem; color: var(--danger); font-weight: 600;">
+              Risk of bacterial shadow in sleeve
+            </div>
+          </div>
+
+          <!-- Machine 6 -->
+          <div class="card">
+            <div class="card-header">
+              <strong style="font-size: 0.95rem;">Ozonator / Microbubble Tank</strong>
+              <span class="badge badge-success"><span class="badge-dot"></span> Good</span>
+            </div>
+            <div class="card-body" style="font-size: 0.82rem; display: flex; flex-direction: column; gap: 6px;">
+              <div>Output: <strong>5g/hr Corona Discharge</strong></div>
+              <div>Residual Ozone: <strong>0.2 ppm (Safe & Effective)</strong></div>
+              <div>Status: <strong>Bottle rinsing tank active</strong></div>
+            </div>
+            <div class="card-footer" style="font-size: 0.75rem; color: var(--text-muted);">
+              Caps & Bottles Sanitizing
+            </div>
+          </div>
+        </div>
+
+        <!-- WATER QUALITY TEST LOG TABLE & PERMIT PANEL -->
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: var(--space-6);">
+          <!-- WATER QUALITY LOG -->
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title">Daily Water Quality & Microbiological Log</h3>
+                <span class="card-subtitle">Compliant with Philippine National Standards for Drinking Water (PNSDW)</span>
+              </div>
+            </div>
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Date / Time</th>
+                    <th>TDS (ppm)</th>
+                    <th>pH Level</th>
+                    <th>Coliform Test</th>
+                    <th>Tested By</th>
+                    <th>DOH Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>Today 08:00 AM</strong></td>
+                    <td><strong style="color: var(--primary);">8 ppm</strong></td>
+                    <td>7.2</td>
+                    <td><span class="badge badge-success">Negative</span></td>
+                    <td>Maria Santos (Inline Meter)</td>
+                    <td><span class="badge badge-success">Passed PNSDW</span></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Oct 06, 2026</strong></td>
+                    <td><strong style="color: var(--primary);">9 ppm</strong></td>
+                    <td>7.1</td>
+                    <td><span class="badge badge-success">Negative</span></td>
+                    <td>Maria Santos</td>
+                    <td><span class="badge badge-success">Passed</span></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Oct 05, 2026</strong></td>
+                    <td><strong style="color: var(--primary);">7 ppm</strong></td>
+                    <td>7.3</td>
+                    <td><span class="badge badge-success">Negative</span></td>
+                    <td>Maria Santos</td>
+                    <td><span class="badge badge-success">Passed</span></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Oct 01, 2026</strong></td>
+                    <td><strong style="color: var(--primary);">8 ppm</strong></td>
+                    <td>7.2</td>
+                    <td><span class="badge badge-success">0 CFU / 100mL</span></td>
+                    <td><strong>Pasig City Health Office</strong></td>
+                    <td><span class="badge badge-info">Official Lab Cert</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- PERMIT & SANITARY COMPLIANCE PANEL -->
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Compliance & Permits</h3>
+            </div>
+            <div class="card-body" style="display: flex; flex-direction: column; gap: var(--space-4);">
+              <div style="background-color: var(--bg-surface-alt); padding: var(--space-3); border-radius: var(--radius-md);">
+                <div style="font-size: 0.75rem; color: var(--text-muted);">DOH Sanitary Permit No.</div>
+                <div style="font-weight: 700; font-family: monospace; font-size: 0.95rem; color: var(--primary);">DOH-NCR-PASIG-2026-0814</div>
+                <div style="font-size: 0.72rem; color: var(--success); margin-top: 2px;">Valid until: Dec 31, 2026</div>
+              </div>
+
+              <div style="background-color: var(--bg-surface-alt); padding: var(--space-3); border-radius: var(--radius-md);">
+                <div style="font-size: 0.75rem; color: var(--text-muted);">Pasig Mayor's Business Permit</div>
+                <div style="font-weight: 700; font-family: monospace; font-size: 0.95rem;">BP-2026-SA-04918</div>
+                <div style="font-size: 0.72rem; color: var(--success); margin-top: 2px;">Active & Inspected</div>
+              </div>
+
+              <div style="background-color: var(--bg-surface-alt); padding: var(--space-3); border-radius: var(--radius-md);">
+                <div style="font-size: 0.75rem; color: var(--text-muted);">Monthly Bacteriological Test</div>
+                <div style="font-weight: 700; font-size: 0.88rem;">Pasig City Health Dept.</div>
+                <div style="font-size: 0.72rem; color: var(--warning-dark); font-weight: 600; margin-top: 2px;">Next submission: Oct 15 (8 days)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- PURE CSS MODAL: LOG TEST (:TARGET) -->
+  <div id="test-log-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">Record Daily Water Quality Test</h3>
+        <a href="#" class="modal-close-btn">&times;</a>
+      </div>
+      <form action="#" method="get">
+        <div class="modal-body">
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label" for="tds-val">TDS Reading (ppm) <span class="required">*</span></label>
+              <input type="number" id="tds-val" class="form-control" value="8" required>
+              <span class="form-hint">Standard: Purified under 10 ppm</span>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="ph-val">pH Level <span class="required">*</span></label>
+              <input type="number" step="0.1" id="ph-val" class="form-control" value="7.2" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="tester-name">Tester Staff Name</label>
+            <input type="text" id="tester-name" class="form-control" value="Maria Santos">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <a href="#" class="btn btn-secondary">Cancel</a>
+          <button type="submit" class="btn btn-primary">Save Water Quality Log</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
