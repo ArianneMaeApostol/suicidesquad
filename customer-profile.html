@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customer Profile - Mang Juan's Store - AquaFlow WRSMS</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="customer-profile">
+  <input type="checkbox" id="theme-toggle" class="toggle-checkbox" aria-label="Toggle Dark Mode">
+  <input type="checkbox" id="nav-toggle" class="toggle-checkbox" aria-label="Toggle Mobile Navigation">
+
+  <div class="app-layout">
+    <label for="nav-toggle" class="sidebar-backdrop" aria-hidden="true"></label>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <a href="dashboard.html" class="brand-link">
+          <div class="brand-logo-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+          </div>
+          <span>AquaFlow WRSMS</span>
+        </a>
+        <label for="nav-toggle" class="sidebar-close-btn" aria-label="Close menu">&times;</label>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div>
+          <div class="nav-group-title">Core Operations</div>
+          <ul class="nav-list">
+            <li>
+              <a href="dashboard.html" class="nav-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                <span>Dashboard</span>
+              </a>
+            </li>
+            <li>
+              <a href="pos.html" class="nav-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                <span>Point of Sale (POS)</span>
+              </a>
+            </li>
+            <li>
+              <a href="deliveries.html" class="nav-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                <span>Deliveries</span>
+                <span class="nav-badge danger">18</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <div class="nav-group-title">Station Management</div>
+          <ul class="nav-list">
+            <li>
+              <a href="customers.html" class="nav-link" aria-current="page">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                <span>Customers</span>
+              </a>
+            </li>
+            <li>
+              <a href="inventory.html" class="nav-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                <span>Stock & Inventory</span>
+              </a>
+            </li>
+            <li>
+              <a href="maintenance.html" class="nav-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+                <span>Machine Maintenance</span>
+              </a>
+            </li>
+            <li>
+              <a href="expenses.html" class="nav-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                <span>Expenses & Cash</span>
+              </a>
+            </li>
+            <li>
+              <a href="reports.html" class="nav-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                <span>Reports & Analytics</span>
+              </a>
+            </li>
+            <li>
+              <a href="settings.html" class="nav-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                <span>Station Settings</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <div class="sidebar-user">
+        <div class="avatar avatar-sm">MS</div>
+        <div class="user-info">
+          <div class="user-name">Maria Santos</div>
+          <div class="user-role">Head Cashier • Shift A</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="app-main">
+      <header class="topbar">
+        <div class="topbar-left">
+          <label for="nav-toggle" class="mobile-menu-btn" aria-label="Open mobile menu">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </label>
+          <div class="topbar-breadcrumb">
+            <a href="customers.html">Customers</a>
+            <span class="divider">/</span>
+            <span class="current">#CUST-001 • Mang Juan's Sari-Sari Store</span>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <label for="theme-toggle" class="theme-toggle-label" title="Toggle Light/Dark Theme">
+            <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+            <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          </label>
+        </div>
+      </header>
+
+      <main class="content-area">
+        <!-- PROFILE HEADER CARD -->
+        <div class="card" style="margin-bottom: var(--space-6);">
+          <div class="card-body">
+            <div style="display: flex; gap: var(--space-5); align-items: flex-start; flex-wrap: wrap;">
+              <div class="avatar avatar-lg" style="background-color: var(--primary); color: var(--white); font-size: 1.5rem;">MJ</div>
+              <div style="flex: 1; min-width: 260px;">
+                <div style="display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; margin-bottom: 4px;">
+                  <h1 style="font-size: 1.45rem; font-family: var(--font-heading); font-weight: 700;">Mang Juan's Sari-Sari Store</h1>
+                  <span class="badge badge-warning">Reseller / Store Account</span>
+                  <span class="badge badge-success"><span class="badge-dot"></span> Active VIP</span>
+                </div>
+                <div style="font-size: 0.85rem; color: var(--text-muted); display: flex; gap: var(--space-4); flex-wrap: wrap; margin-bottom: var(--space-3);">
+                  <span>Contact: <strong>Juan Dela Cruz</strong> (0917-849-2041)</span>
+                  <span>Address: <strong>#42 Mabini St., Kapasigan, Pasig City</strong></span>
+                  <span>Member Since: <strong>Jan 15, 2024</strong></span>
+                </div>
+                <div style="display: flex; gap: var(--space-6); flex-wrap: wrap; padding-top: var(--space-3); border-top: 1px solid var(--border-color);">
+                  <div>
+                    <span style="font-size: 0.75rem; color: var(--text-muted); display: block;">Total Gallons Refilled</span>
+                    <strong style="font-size: 1.2rem; font-family: var(--font-heading);">1,240 gals</strong>
+                  </div>
+                  <div>
+                    <span style="font-size: 0.75rem; color: var(--text-muted); display: block;">Borrowed Containers</span>
+                    <strong style="font-size: 1.2rem; font-family: var(--font-heading); color: var(--primary);">16 units</strong>
+                  </div>
+                  <div>
+                    <span style="font-size: 0.75rem; color: var(--text-muted); display: block;">Current Credit (Utang)</span>
+                    <strong style="font-size: 1.2rem; font-family: var(--font-heading); color: var(--danger);">₱650.00</strong>
+                  </div>
+                  <div>
+                    <span style="font-size: 0.75rem; color: var(--text-muted); display: block;">Credit Limit</span>
+                    <strong style="font-size: 1.2rem; font-family: var(--font-heading);">₱1,500.00</strong>
+                  </div>
+                </div>
+              </div>
+              <div style="display: flex; gap: var(--space-2);">
+                <a href="pos.html" class="btn btn-primary btn-sm">Create New Refill</a>
+                <a href="#payment-modal" class="btn btn-secondary btn-sm">Record Payment</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PURE CSS TABS (RADIO INPUT DRIVEN) -->
+        <div class="tab-container">
+          <!-- Radio Inputs -->
+          <input type="radio" name="profile_tab" id="tab-overview" class="tab-switch" checked>
+          <input type="radio" name="profile_tab" id="tab-tx" class="tab-switch">
+          <input type="radio" name="profile_tab" id="tab-containers" class="tab-switch">
+          <input type="radio" name="profile_tab" id="tab-balance" class="tab-switch">
+
+          <!-- Tab Navigation Headers -->
+          <div class="tab-nav">
+            <label for="tab-overview" class="tab-label">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+              <span>Account Overview</span>
+            </label>
+            <label for="tab-tx" class="tab-label">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/></svg>
+              <span>Transaction History</span>
+            </label>
+            <label for="tab-containers" class="tab-label">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+              <span>Container Ledger (16 Lent)</span>
+            </label>
+            <label for="tab-balance" class="tab-label">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+              <span>Statement of Account (SOA)</span>
+            </label>
+          </div>
+
+          <!-- TAB 1: OVERVIEW -->
+          <div id="content-overview" class="tab-content">
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: var(--space-6);">
+              <div class="card">
+                <div class="card-header">
+                  <h3 class="card-title">Delivery & Logistics Preferences</h3>
+                </div>
+                <div class="card-body" style="display: flex; flex-direction: column; gap: var(--space-4);">
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4);">
+                    <div>
+                      <div class="form-label" style="color: var(--text-muted);">Scheduled Delivery Days</div>
+                      <div style="font-weight: 600;">Every Tuesday & Friday (Morning 9:00 AM)</div>
+                    </div>
+                    <div>
+                      <div class="form-label" style="color: var(--text-muted);">Assigned Rider</div>
+                      <div style="font-weight: 600;">Arlene Magbanua (Tricycle Sidecar #02)</div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <div class="form-label" style="color: var(--text-muted);">Delivery Notes & Instructions</div>
+                    <p style="font-size: 0.85rem; color: var(--text-main); background: var(--bg-surface-alt); padding: var(--space-3); border-radius: var(--radius-md);">
+                      Leave the 15 filled slim gallons stacked neatly in the left storefront corner. Collect the empty containers with yellow cap rings. Juan pays weekly every Friday afternoon via Maya or Cash.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="card-header">
+                  <h3 class="card-title">Quick Actions</h3>
+                </div>
+                <div class="card-body" style="display: flex; flex-direction: column; gap: var(--space-3);">
+                  <a href="pos.html" class="btn btn-primary btn-block">Quick Refill Dispatch</a>
+                  <a href="#container-modal" class="btn btn-outline btn-block">Lend / Return Containers</a>
+                  <a href="#" class="btn btn-secondary btn-block">Send SMS Balance Reminder</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 2: TRANSACTIONS -->
+          <div id="content-tx" class="tab-content">
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Slip #</th>
+                    <th>Date & Time</th>
+                    <th>Items Refilled</th>
+                    <th>Subtotal</th>
+                    <th>Payment Method</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong style="color: var(--primary);">#SLP-1047</strong></td>
+                    <td>Oct 07, 2026 08:30 AM</td>
+                    <td>15x 5-Gal Slim Purified</td>
+                    <td><strong>₱525.00</strong></td>
+                    <td><span class="badge badge-warning">Credit (Utang)</span></td>
+                    <td><span class="badge badge-warning">Dispatched</span></td>
+                  </tr>
+                  <tr>
+                    <td><strong style="color: var(--primary);">#SLP-1012</strong></td>
+                    <td>Oct 03, 2026 09:15 AM</td>
+                    <td>15x 5-Gal Slim Purified</td>
+                    <td><strong>₱525.00</strong></td>
+                    <td><span class="badge badge-success">Cash Paid</span></td>
+                    <td><span class="badge badge-success">Delivered</span></td>
+                  </tr>
+                  <tr>
+                    <td><strong style="color: var(--primary);">#SLP-0980</strong></td>
+                    <td>Sep 29, 2026 09:00 AM</td>
+                    <td>15x 5-Gal Slim Purified + 50 Caps</td>
+                    <td><strong>₱545.00</strong></td>
+                    <td><span class="badge badge-neutral">Maya E-Wallet</span></td>
+                    <td><span class="badge badge-success">Delivered</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- TAB 3: CONTAINER LEDGER -->
+          <div id="content-containers" class="tab-content">
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Container Serial #</th>
+                    <th>Type</th>
+                    <th>Lent Date</th>
+                    <th>Status</th>
+                    <th>Days with Customer</th>
+                    <th>Deposit Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong style="color: var(--primary); font-family: monospace;">#CONT-SLIM-0192</strong></td>
+                    <td>5-Gal Blue Slim Tap</td>
+                    <td>Sep 15, 2026</td>
+                    <td><span class="badge badge-warning">With Customer</span></td>
+                    <td>22 days</td>
+                    <td>Waived (Trusted Reseller)</td>
+                  </tr>
+                  <tr>
+                    <td><strong style="color: var(--primary); font-family: monospace;">#CONT-SLIM-0193</strong></td>
+                    <td>5-Gal Blue Slim Tap</td>
+                    <td>Sep 15, 2026</td>
+                    <td><span class="badge badge-warning">With Customer</span></td>
+                    <td>22 days</td>
+                    <td>Waived</td>
+                  </tr>
+                  <tr>
+                    <td><strong style="color: var(--primary); font-family: monospace;">#CONT-RND-0054</strong></td>
+                    <td>5-Gal Round Polycarbonate</td>
+                    <td>Aug 10, 2026</td>
+                    <td><span class="badge badge-warning">With Customer</span></td>
+                    <td>58 days</td>
+                    <td>Waived</td>
+                  </tr>
+                  <tr>
+                    <td><strong style="color: var(--primary); font-family: monospace;">#CONT-SLIM-0180</strong></td>
+                    <td>5-Gal Blue Slim Tap</td>
+                    <td>Sep 29, 2026</td>
+                    <td><span class="badge badge-success">Returned & Sanitized</span></td>
+                    <td>4 days</td>
+                    <td>Returned Clean</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- TAB 4: BALANCE & SOA -->
+          <div id="content-balance" class="tab-content">
+            <div class="card" style="margin-bottom: var(--space-4);">
+              <div class="card-header">
+                <h3 class="card-title">Credit Ledger (Sari-Sari Store Utang)</h3>
+                <span class="badge badge-danger">Unsettled: ₱650.00</span>
+              </div>
+              <div class="table-responsive">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Transaction Description</th>
+                      <th>Debit (+)</th>
+                      <th>Credit (-)</th>
+                      <th>Running Balance</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Oct 07, 2026</td>
+                      <td>Refill 15x Slim Gallons (Slip #SLP-1047)</td>
+                      <td style="color: var(--danger); font-weight: 700;">+₱525.00</td>
+                      <td>-</td>
+                      <td><strong>₱650.00</strong></td>
+                    </tr>
+                    <tr>
+                      <td>Oct 03, 2026</td>
+                      <td>Cash Partial Payment (Maria Santos Recv)</td>
+                      <td>-</td>
+                      <td style="color: var(--success); font-weight: 700;">-₱400.00</td>
+                      <td><strong>₱125.00</strong></td>
+                    </tr>
+                    <tr>
+                      <td>Sep 29, 2026</td>
+                      <td>Refill 15x Slim Gallons (Slip #SLP-0980)</td>
+                      <td style="color: var(--danger); font-weight: 700;">+₱525.00</td>
+                      <td>-</td>
+                      <td><strong>₱525.00</strong></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- PURE CSS MODAL: RECORD PAYMENT (:TARGET) -->
+  <div id="payment-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">Record Payment from Mang Juan</h3>
+        <a href="#" class="modal-close-btn">&times;</a>
+      </div>
+      <form action="#" method="get">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label">Outstanding Balance: <strong style="color: var(--danger);">₱650.00</strong></label>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="pay-amt">Amount Received (₱) <span class="required">*</span></label>
+            <div class="input-prefix-group">
+              <span class="input-prefix">₱</span>
+              <input type="number" id="pay-amt" class="form-control" value="650" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="pay-type">Payment Channel</label>
+            <select id="pay-type" class="form-control">
+              <option value="cash">Cash on Hand</option>
+              <option value="gcash">GCash Transfer</option>
+              <option value="maya">Maya Wallet</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="pay-ref">Reference # / Notes</label>
+            <input type="text" id="pay-ref" class="form-control" placeholder="e.g. GCash Ref #802194883">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <a href="#" class="btn btn-secondary">Cancel</a>
+          <button type="submit" class="btn btn-success">Confirm & Deduct Balance</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
