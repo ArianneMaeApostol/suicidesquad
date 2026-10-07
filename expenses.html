@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Expenses & Cash Flow - AquaFlow WRSMS</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="expenses">
+  <input type="checkbox" id="theme-toggle" class="toggle-checkbox" aria-label="Toggle Dark Mode">
+  <input type="checkbox" id="nav-toggle" class="toggle-checkbox" aria-label="Toggle Mobile Navigation">
+
+  <div class="app-layout">
+    <label for="nav-toggle" class="sidebar-backdrop" aria-hidden="true"></label>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <a href="dashboard.html" class="brand-link">
+          <div class="brand-logo-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+          </div>
+          <span>AquaFlow WRSMS</span>
+        </a>
+        <label for="nav-toggle" class="sidebar-close-btn" aria-label="Close menu">&times;</label>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div>
+          <div class="nav-group-title">Core Operations</div>
+          <ul class="nav-list">
+            <li>
+              <a href="dashboard.html" class="nav-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                <span>Dashboard</span>
+              </a>
+            </li>
+            <li>
+              <a href="pos.html" class="nav-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                <span>Point of Sale (POS)</span>
+              </a>
+            </li>
+            <li>
+              <a href="deliveries.html" class="nav-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                <span>Deliveries</span>
+                <span class="nav-badge danger">18</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <div class="nav-group-title">Station Management</div>
+          <ul class="nav-list">
+            <li>
+              <a href="customers.html" class="nav-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                <span>Customers</span>
+              </a>
+            </li>
+            <li>
+              <a href="inventory.html" class="nav-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                <span>Stock & Inventory</span>
+              </a>
+            </li>
+            <li>
+              <a href="maintenance.html" class="nav-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+                <span>Machine Maintenance</span>
+              </a>
+            </li>
+            <li>
+              <a href="expenses.html" class="nav-link" aria-current="page">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                <span>Expenses & Cash</span>
+              </a>
+            </li>
+            <li>
+              <a href="reports.html" class="nav-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                <span>Reports & Analytics</span>
+              </a>
+            </li>
+            <li>
+              <a href="settings.html" class="nav-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                <span>Station Settings</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <div class="sidebar-user">
+        <div class="avatar avatar-sm">MS</div>
+        <div class="user-info">
+          <div class="user-name">Maria Santos</div>
+          <div class="user-role">Head Cashier • Shift A</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="app-main">
+      <header class="topbar">
+        <div class="topbar-left">
+          <label for="nav-toggle" class="mobile-menu-btn" aria-label="Open mobile menu">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </label>
+          <div class="topbar-breadcrumb">
+            <a href="dashboard.html">Station</a>
+            <span class="divider">/</span>
+            <span class="current">Operational Expenses & Cashflow</span>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <label for="theme-toggle" class="theme-toggle-label" title="Toggle Light/Dark Theme">
+            <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+            <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          </label>
+        </div>
+      </header>
+
+      <main class="content-area">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Expenses & Operating Cash Flow</h1>
+            <p class="page-subtitle">Track power utilities (Meralco), water bills (Manila Water), delivery fuel, and rider commissions.</p>
+          </div>
+          <div class="header-actions">
+            <a href="#expense-modal" class="btn btn-primary">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              <span>Record Expense Voucher</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- CASH IN VS CASH OUT COMPARISON -->
+        <div class="card" style="margin-bottom: var(--space-6);">
+          <div class="card-header">
+            <h3 class="card-title">Daily Cash Summary (Today, Oct 07)</h3>
+            <span class="badge badge-success">Net Cash Flow: +₱13,370.00</span>
+          </div>
+          <div class="card-body">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-6);">
+              <div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: var(--space-2);">
+                  <span style="font-weight: 600; color: var(--success-dark);">Cash In (Sales & Balances)</span>
+                  <strong style="color: var(--success); font-size: 1.1rem;">₱14,850.00</strong>
+                </div>
+                <div class="progress-bar-container" style="height: 12px;">
+                  <div class="progress-bar-fill green" style="width: 100%;"></div>
+                </div>
+                <span style="font-size: 0.74rem; color: var(--text-muted); margin-top: 4px; display: block;">Counter sales & collections</span>
+              </div>
+
+              <div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: var(--space-2);">
+                  <span style="font-weight: 600; color: var(--danger-dark);">Cash Out (Disbursements)</span>
+                  <strong style="color: var(--danger); font-size: 1.1rem;">₱1,480.00</strong>
+                </div>
+                <div class="progress-bar-container" style="height: 12px;">
+                  <div class="progress-bar-fill red" style="width: 10%;"></div>
+                </div>
+                <span style="font-size: 0.74rem; color: var(--text-muted); margin-top: 4px; display: block;">Tricycle gasoline & lunch allowance</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CATEGORY EXPENSES CARDS -->
+        <div class="kpi-grid" style="margin-bottom: var(--space-6);">
+          <div class="kpi-card">
+            <span class="kpi-label">Meralco Electricity</span>
+            <div class="kpi-value" style="font-size: 1.5rem;">₱18,450 <span style="font-size: 0.8rem; color: var(--text-muted);">/ mo</span></div>
+            <span style="font-size: 0.74rem; color: var(--text-muted);">RO Pump & UV Continuous run</span>
+          </div>
+
+          <div class="kpi-card">
+            <span class="kpi-label">Manila Water Raw Supply</span>
+            <div class="kpi-value" style="font-size: 1.5rem;">₱12,800 <span style="font-size: 0.8rem; color: var(--text-muted);">/ mo</span></div>
+            <span style="font-size: 0.74rem; color: var(--text-muted);">Commercial Metered Pasig</span>
+          </div>
+
+          <div class="kpi-card">
+            <span class="kpi-label">Vehicle Fuel & Upkeep</span>
+            <div class="kpi-value" style="font-size: 1.5rem;">₱6,200 <span style="font-size: 0.8rem; color: var(--text-muted);">/ mo</span></div>
+            <span style="font-size: 0.74rem; color: var(--text-muted);">Tricycle 2-stroke oil & gas</span>
+          </div>
+
+          <div class="kpi-card">
+            <span class="kpi-label">Rider & Staff Pay</span>
+            <div class="kpi-value" style="font-size: 1.5rem;">₱24,000 <span style="font-size: 0.8rem; color: var(--text-muted);">/ mo</span></div>
+            <span style="font-size: 0.74rem; color: var(--text-muted);">₱3.00 commission / gallon</span>
+          </div>
+        </div>
+
+        <!-- EXPENSE VOUCHER TABLE -->
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Voucher #</th>
+                <th>Date</th>
+                <th>Category</th>
+                <th>Description / Purpose</th>
+                <th>Payment Mode</th>
+                <th>Amount</th>
+                <th>Encoded By</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong style="font-family: monospace; color: var(--primary);">#EXP-204</strong></td>
+                <td>Today 07:45 AM</td>
+                <td><span class="badge badge-neutral">Logistics & Fuel</span></td>
+                <td>Gasoline refill for Trike #01 (Shell C5 Pasig)</td>
+                <td>Petty Cash</td>
+                <td><strong style="color: var(--danger);">₱350.00</strong></td>
+                <td>Maria Santos</td>
+              </tr>
+              <tr>
+                <td><strong style="font-family: monospace; color: var(--primary);">#EXP-203</strong></td>
+                <td>Today 08:15 AM</td>
+                <td><span class="badge badge-neutral">Maintenance / Salt</span></td>
+                <td>1 Bag Solar Brine Salt for Softener Resin</td>
+                <td>Cash</td>
+                <td><strong style="color: var(--danger);">₱380.00</strong></td>
+                <td>Maria Santos</td>
+              </tr>
+              <tr>
+                <td><strong style="font-family: monospace; color: var(--primary);">#EXP-202</strong></td>
+                <td>Today 11:30 AM</td>
+                <td><span class="badge badge-neutral">Staff Welfare</span></td>
+                <td>Riders and operators shift lunch allowance</td>
+                <td>Petty Cash</td>
+                <td><strong style="color: var(--danger);">₱750.00</strong></td>
+                <td>Maria Santos</td>
+              </tr>
+              <tr>
+                <td><strong style="font-family: monospace; color: var(--primary);">#EXP-201</strong></td>
+                <td>Oct 05, 2026</td>
+                <td><span class="badge badge-neutral">Utilities / Power</span></td>
+                <td>Meralco Commercial Electric Bill (Sep Period)</td>
+                <td>GCash Bills Pay</td>
+                <td><strong style="color: var(--danger);">₱18,450.00</strong></td>
+                <td>Station Owner</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- PURE CSS MODAL: RECORD EXPENSE (:TARGET) -->
+  <div id="expense-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">Record Operating Expense Voucher</h3>
+        <a href="#" class="modal-close-btn">&times;</a>
+      </div>
+      <form action="#" method="get">
+        <div class="modal-body">
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label" for="exp-cat">Expense Category <span class="required">*</span></label>
+              <select id="exp-cat" class="form-control" required>
+                <option value="fuel">Logistics & Tricycle Fuel</option>
+                <option value="utilities">Utilities (Water / Meralco)</option>
+                <option value="parts">Machine Parts & Filter Replacement</option>
+                <option value="commission">Rider Per-Gallon Commissions</option>
+                <option value="supplies">Store Consumables (Caps & Seals)</option>
+                <option value="petty">Petty Cash / General Miscellaneous</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="exp-amount">Amount (₱) <span class="required">*</span></label>
+              <div class="input-prefix-group">
+                <span class="input-prefix">₱</span>
+                <input type="number" id="exp-amount" class="form-control" placeholder="0.00" required>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="exp-desc">Description & Official Receipt #</label>
+            <input type="text" id="exp-desc" class="form-control" placeholder="e.g. Caltex Gas OR #19482 for Tricycle #02" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="exp-paymode">Disbursement Method</label>
+            <select id="exp-paymode" class="form-control">
+              <option value="cash">Station Petty Cash Drawer</option>
+              <option value="gcash">Owner GCash Account</option>
+              <option value="bank">Bank Transfer (BDO / BPI)</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <a href="#" class="btn btn-secondary">Cancel</a>
+          <button type="submit" class="btn btn-danger">Disburse & Record Expense</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
