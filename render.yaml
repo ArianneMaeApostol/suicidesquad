@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: aquaflow-wrsms-api
+    runtime: python
+    region: singapore
+    plan: free
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: cd backend && uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: aquaflow-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: ALLOWED_ORIGINS
+        value: "*"
+
+databases:
+  - name: aquaflow-db
+    region: singapore
+    plan: free
+    databaseName: wrsms_db
+    user: wrsms_user

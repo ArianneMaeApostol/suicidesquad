@@ -3,8 +3,13 @@
  * FastAPI backend configuration, endpoint base URL, and local storage tokens.
  */
 
-// Base URL for Python FastAPI server
-export const API_BASE_URL = window.__API_BASE_URL__ || 'http://localhost:8000';
+// Base URL for Python FastAPI server (supports cloud backend or localhost)
+export const API_BASE_URL =
+  window.__API_BASE_URL__ ||
+  localStorage.getItem('wrsms_api_url') ||
+  (typeof window !== 'undefined' && window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? 'http://localhost:8000'
+    : 'http://localhost:8000');
 
 export const TOKEN_STORAGE_KEY = 'wrsms_token';
 export const USER_STORAGE_KEY = 'wrsms_user';
