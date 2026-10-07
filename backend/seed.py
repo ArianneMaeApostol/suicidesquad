@@ -32,6 +32,14 @@ async def seed():
         with open(schema_path, "r", encoding="utf-8") as f:
             await conn.execute(f.read())
 
+    # Check if database is already initialized
+    user_count = await conn.fetchval("SELECT COUNT(*) FROM users;")
+    force = "--force" in sys.argv
+    if user_count > 0 and not force:
+        print(f"Database already contains {user_count} users. Skipping seed (use --force to re-seed).")
+        await conn.close()
+        return
+
     print("Cleaning existing seed records...")
     await conn.execute("""
         TRUNCATE TABLE container_ledger, sale_items, sales, delivery_orders,
