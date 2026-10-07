@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Delivery Dispatch Board - AquaFlow WRSMS</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="deliveries">
+  <input type="checkbox" id="theme-toggle" class="toggle-checkbox" aria-label="Toggle Dark Mode">
+  <input type="checkbox" id="nav-toggle" class="toggle-checkbox" aria-label="Toggle Mobile Navigation">
+
+  <div class="app-layout">
+    <label for="nav-toggle" class="sidebar-backdrop" aria-hidden="true"></label>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <a href="dashboard.html" class="brand-link">
+          <div class="brand-logo-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+          </div>
+          <span>AquaFlow WRSMS</span>
+        </a>
+        <label for="nav-toggle" class="sidebar-close-btn" aria-label="Close menu">&times;</label>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div>
+          <div class="nav-group-title">Core Operations</div>
+          <ul class="nav-list">
+            <li>
+              <a href="dashboard.html" class="nav-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                <span>Dashboard</span>
+              </a>
+            </li>
+            <li>
+              <a href="pos.html" class="nav-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                <span>Point of Sale (POS)</span>
+              </a>
+            </li>
+            <li>
+              <a href="deliveries.html" class="nav-link" aria-current="page">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                <span>Deliveries</span>
+                <span class="nav-badge danger">18</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <div class="nav-group-title">Station Management</div>
+          <ul class="nav-list">
+            <li>
+              <a href="customers.html" class="nav-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                <span>Customers</span>
+              </a>
+            </li>
+            <li>
+              <a href="inventory.html" class="nav-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                <span>Stock & Inventory</span>
+              </a>
+            </li>
+            <li>
+              <a href="maintenance.html" class="nav-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+                <span>Machine Maintenance</span>
+              </a>
+            </li>
+            <li>
+              <a href="expenses.html" class="nav-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                <span>Expenses & Cash</span>
+              </a>
+            </li>
+            <li>
+              <a href="reports.html" class="nav-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                <span>Reports & Analytics</span>
+              </a>
+            </li>
+            <li>
+              <a href="settings.html" class="nav-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                <span>Station Settings</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <div class="sidebar-user">
+        <div class="avatar avatar-sm">MS</div>
+        <div class="user-info">
+          <div class="user-name">Maria Santos</div>
+          <div class="user-role">Head Cashier • Shift A</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="app-main">
+      <header class="topbar">
+        <div class="topbar-left">
+          <label for="nav-toggle" class="mobile-menu-btn" aria-label="Open mobile menu">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </label>
+          <div class="topbar-breadcrumb">
+            <a href="dashboard.html">Station</a>
+            <span class="divider">/</span>
+            <span class="current">Logistics & Rider Dispatch Board</span>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <label for="theme-toggle" class="theme-toggle-label" title="Toggle Light/Dark Theme">
+            <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+            <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          </label>
+        </div>
+      </header>
+
+      <main class="content-area">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Delivery Dispatch Board</h1>
+            <p class="page-subtitle">Assign tricycle riders, monitor routes across Pasig barangays, and verify cash remittances.</p>
+          </div>
+          <div class="header-actions">
+            <a href="#new-delivery-modal" class="btn btn-primary">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              <span>Create Delivery Trip</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- DISPATCH TOOLBAR -->
+        <div style="display: flex; gap: var(--space-4); margin-bottom: var(--space-5); flex-wrap: wrap; align-items: center;">
+          <div style="display: flex; gap: var(--space-2); align-items: center;">
+            <span style="font-size: 0.82rem; font-weight: 600; color: var(--text-muted);">Active Riders:</span>
+            <span class="badge badge-success">Arlene Magbanua (Trike #1)</span>
+            <span class="badge badge-success">Junjun Ramos (Motor #2)</span>
+            <span class="badge badge-neutral">Kuya Bert (Standby)</span>
+          </div>
+          <div style="margin-left: auto; display: flex; gap: var(--space-2);">
+            <select class="form-control" style="font-size: 0.8rem; padding: 6px 12px; width: 170px;">
+              <option>All Barangays</option>
+              <option>San Antonio</option>
+              <option>Kapasigan</option>
+              <option>Caniogan</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- 4-COLUMN RESPONSIVE KANBAN BOARD -->
+        <div class="kanban-board">
+          <!-- COLUMN 1: PENDING -->
+          <div class="kanban-col">
+            <div class="kanban-header">
+              <span class="kanban-title">
+                <span class="badge-dot" style="background-color: var(--slate-400);"></span>
+                <span>Pending Orders (6)</span>
+              </span>
+              <span class="badge badge-neutral">Queued</span>
+            </div>
+            <div class="kanban-cards">
+              <!-- Card 1 -->
+              <div class="kanban-card">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <span class="delivery-id-tag">#DEL-304</span>
+                  <span style="font-size: 0.72rem; color: var(--text-muted);">10 mins ago</span>
+                </div>
+                <div class="delivery-customer">Pasig City Hall Canteen</div>
+                <div class="delivery-address">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                  <span>San Nicolas, Caruncho Ave</span>
+                </div>
+                <div style="font-size: 0.8rem; margin-bottom: 6px;">
+                  <strong>20x</strong> 5-Gal Slim Purified
+                </div>
+                <div class="delivery-footer">
+                  <span class="badge badge-info">Commercial Account</span>
+                  <strong style="color: var(--primary);">₱700.00</strong>
+                </div>
+              </div>
+
+              <!-- Card 2 -->
+              <div class="kanban-card">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <span class="delivery-id-tag">#DEL-305</span>
+                  <span style="font-size: 0.72rem; color: var(--text-muted);">25 mins ago</span>
+                </div>
+                <div class="delivery-customer">Atty. Manuel Roxas</div>
+                <div class="delivery-address">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                  <span>Valle Verde 2, Brgy. Ugong</span>
+                </div>
+                <div style="font-size: 0.8rem; margin-bottom: 6px;">
+                  <strong>4x</strong> Alkaline 5-Gal
+                </div>
+                <div class="delivery-footer">
+                  <span class="badge badge-success">Paid via GCash</span>
+                  <strong style="color: var(--primary);">₱200.00</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- COLUMN 2: ASSIGNED -->
+          <div class="kanban-col">
+            <div class="kanban-header">
+              <span class="kanban-title">
+                <span class="badge-dot" style="background-color: var(--warning);"></span>
+                <span>Assigned to Rider (4)</span>
+              </span>
+              <span class="badge badge-warning">Staging</span>
+            </div>
+            <div class="kanban-cards">
+              <!-- Card 3 -->
+              <div class="kanban-card">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <span class="delivery-id-tag">#DEL-302</span>
+                  <span style="font-size: 0.72rem; color: var(--text-muted);">Loading bottles</span>
+                </div>
+                <div class="delivery-customer">Aling Nena's Bakery</div>
+                <div class="delivery-address">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                  <span>#15 A. Luna St., Caniogan</span>
+                </div>
+                <div style="font-size: 0.8rem; margin-bottom: 6px;">
+                  <strong>6x</strong> 5-Gal Slim Refill
+                </div>
+                <div style="background-color: var(--bg-surface-alt); padding: 4px 8px; border-radius: var(--radius-sm); font-size: 0.75rem; margin-bottom: 6px;">
+                  Rider: <strong>Junjun Ramos</strong> (Motor #2)
+                </div>
+                <div class="delivery-footer">
+                  <span class="badge badge-neutral">COD Cash</span>
+                  <strong style="color: var(--primary);">₱210.00</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- COLUMN 3: OUT FOR DELIVERY -->
+          <div class="kanban-col">
+            <div class="kanban-header">
+              <span class="kanban-title">
+                <span class="badge-dot" style="background-color: var(--primary);"></span>
+                <span>Out for Delivery (4)</span>
+              </span>
+              <span class="badge badge-primary">On Route</span>
+            </div>
+            <div class="kanban-cards">
+              <!-- Card 4 -->
+              <div class="kanban-card" style="border-left: 3px solid var(--primary);">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <span class="delivery-id-tag">#DEL-301</span>
+                  <span class="badge badge-primary">Dispatched 09:10</span>
+                </div>
+                <div class="delivery-customer">Mang Juan's Sari-Sari Store</div>
+                <div class="delivery-address">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                  <span>#42 Mabini St., Kapasigan</span>
+                </div>
+                <div style="font-size: 0.8rem; margin-bottom: 6px;">
+                  <strong>15x</strong> Slim Containers Refill
+                </div>
+                <div style="background-color: var(--primary-tint); padding: 4px 8px; border-radius: var(--radius-sm); font-size: 0.75rem; margin-bottom: 6px; color: var(--primary-dark);">
+                  Rider: <strong>Arlene Magbanua</strong> (Trike #1)
+                </div>
+                <div class="delivery-footer">
+                  <span class="badge badge-warning">Credit / Utang</span>
+                  <strong style="color: var(--danger);">₱525.00</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- COLUMN 4: DELIVERED & REMITTED -->
+          <div class="kanban-col">
+            <div class="kanban-header">
+              <span class="kanban-title">
+                <span class="badge-dot" style="background-color: var(--success);"></span>
+                <span>Delivered & Remitted (4)</span>
+              </span>
+              <span class="badge badge-success">Completed</span>
+            </div>
+            <div class="kanban-cards">
+              <!-- Card 5 -->
+              <div class="kanban-card" style="border-left: 3px solid var(--success);">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <span class="delivery-id-tag">#DEL-299</span>
+                  <span style="font-size: 0.72rem; color: var(--success); font-weight: 700;">Delivered 08:45 AM</span>
+                </div>
+                <div class="delivery-customer">Dr. Fernando Poe Memorial Clinic</div>
+                <div class="delivery-address">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                  <span>Pasig Boulevard, Bagong Ilog</span>
+                </div>
+                <div style="font-size: 0.8rem; margin-bottom: 6px;">
+                  <strong>8x</strong> 5-Gal Round Purified
+                </div>
+                <div class="delivery-footer">
+                  <span class="badge badge-success">Cash Remitted</span>
+                  <strong style="color: var(--success);">₱240.00</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- PURE CSS MODAL: CREATE DELIVERY TRIP (:TARGET) -->
+  <div id="new-delivery-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">Book New Delivery Trip</h3>
+        <a href="#" class="modal-close-btn">&times;</a>
+      </div>
+      <form action="#" method="get">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label" for="del-cust">Select Customer <span class="required">*</span></label>
+            <select id="del-cust" class="form-control" required>
+              <option value="1">Mang Juan's Sari-Sari Store (#42 Mabini St., Kapasigan)</option>
+              <option value="2">Pasig City Hall Canteen (Caruncho Ave)</option>
+              <option value="3">Aling Nena's Bakery (A. Luna St., Caniogan)</option>
+            </select>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label" for="del-qty">Slim 5-Gal Gallons</label>
+              <input type="number" id="del-qty" class="form-control" value="5" min="1">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="del-rider">Assign Rider Vehicle</label>
+              <select id="del-rider" class="form-control">
+                <option value="1">Arlene Magbanua - Tricycle Sidecar #01</option>
+                <option value="2">Junjun Ramos - Motorcycle Rack #02</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="del-pay">Payment Terms</label>
+            <select id="del-pay" class="form-control">
+              <option value="cod">Cash on Delivery (COD)</option>
+              <option value="gcash">Prepaid via GCash</option>
+              <option value="credit">Charge to Account / Utang</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <a href="#" class="btn btn-secondary">Cancel</a>
+          <button type="submit" class="btn btn-primary">Dispatch Trip</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
