@@ -1,0 +1,8 @@
+# Ignore backend and local files for Vercel static frontend deployment
+backend/
+requirements/
+render.yaml
+run_project.sh
+*.log
+.env
+.env.*
