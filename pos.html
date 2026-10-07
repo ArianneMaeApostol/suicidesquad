@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Point of Sale (POS) - AquaFlow WRSMS</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="pos">
+  <input type="checkbox" id="theme-toggle" class="toggle-checkbox" aria-label="Toggle Dark Mode">
+  <input type="checkbox" id="nav-toggle" class="toggle-checkbox" aria-label="Toggle Mobile Navigation">
+
+  <div class="app-layout">
+    <label for="nav-toggle" class="sidebar-backdrop" aria-hidden="true"></label>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <a href="dashboard.html" class="brand-link">
+          <div class="brand-logo-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+          </div>
+          <span>AquaFlow WRSMS</span>
+        </a>
+        <label for="nav-toggle" class="sidebar-close-btn" aria-label="Close menu">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </label>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div>
+          <div class="nav-group-title">Core Operations</div>
+          <ul class="nav-list">
+            <li>
+              <a href="dashboard.html" class="nav-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                <span>Dashboard</span>
+              </a>
+            </li>
+            <li>
+              <a href="pos.html" class="nav-link" aria-current="page">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                <span>Point of Sale (POS)</span>
+                <span class="nav-badge">Active</span>
+              </a>
+            </li>
+            <li>
+              <a href="deliveries.html" class="nav-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                <span>Deliveries</span>
+                <span class="nav-badge danger">18</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <div class="nav-group-title">Station Management</div>
+          <ul class="nav-list">
+            <li>
+              <a href="customers.html" class="nav-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                <span>Customers</span>
+              </a>
+            </li>
+            <li>
+              <a href="inventory.html" class="nav-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                <span>Stock & Inventory</span>
+              </a>
+            </li>
+            <li>
+              <a href="maintenance.html" class="nav-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+                <span>Machine Maintenance</span>
+              </a>
+            </li>
+            <li>
+              <a href="expenses.html" class="nav-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                <span>Expenses & Cash</span>
+              </a>
+            </li>
+            <li>
+              <a href="reports.html" class="nav-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                <span>Reports & Analytics</span>
+              </a>
+            </li>
+            <li>
+              <a href="settings.html" class="nav-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                <span>Station Settings</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <div class="sidebar-user">
+        <div class="avatar avatar-sm">MS</div>
+        <div class="user-info">
+          <div class="user-name">Maria Santos</div>
+          <div class="user-role">Head Cashier • Shift A</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- APP MAIN WRAPPER -->
+    <div class="app-main">
+      <header class="topbar">
+        <div class="topbar-left">
+          <label for="nav-toggle" class="mobile-menu-btn" aria-label="Open mobile menu">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </label>
+          <div class="topbar-breadcrumb">
+            <a href="dashboard.html">Station</a>
+            <span class="divider">/</span>
+            <span class="current">Counter POS Register</span>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <span class="badge badge-success" style="font-size: 0.8rem; padding: 6px 12px;">
+            <span class="badge-dot"></span> Shift Cash Draw: ₱8,450.00
+          </span>
+
+          <label for="theme-toggle" class="theme-toggle-label" title="Toggle Light/Dark Theme">
+            <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+            <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          </label>
+        </div>
+      </header>
+
+      <!-- POS MAIN SCREEN -->
+      <main class="content-area" style="padding-bottom: var(--space-4);">
+        <div class="pos-layout">
+          <!-- LEFT: PRODUCT CATALOG -->
+          <div class="pos-catalog">
+            <!-- Search & Barcode Input -->
+            <div style="display: flex; gap: var(--space-3); margin-bottom: var(--space-3);">
+              <div class="search-bar" style="flex: 1;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input type="search" placeholder="Quick search product or SKU code..." style="width: 100%;">
+              </div>
+              <a href="#quick-custom-sale" class="btn btn-secondary">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <span>Custom Item</span>
+              </a>
+            </div>
+
+            <!-- Categories Tabs -->
+            <div class="pos-categories">
+              <button class="pos-cat-pill active">All Items (8)</button>
+              <button class="pos-cat-pill">Water Refills</button>
+              <button class="pos-cat-pill">New Containers</button>
+              <button class="pos-cat-pill">Caps & Seals</button>
+              <button class="pos-cat-pill">Accessories</button>
+            </div>
+
+            <!-- Product Cards Grid -->
+            <div class="pos-product-grid">
+              <!-- Item 1 -->
+              <div class="pos-product-card">
+                <div class="pos-product-icon">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+                </div>
+                <div class="pos-product-name">5-Gal Round Refill</div>
+                <div class="pos-product-meta">Purified Mineral • In stock</div>
+                <div class="pos-product-footer">
+                  <div class="pos-product-price">₱30.00</div>
+                  <span class="badge badge-primary">+ Add</span>
+                </div>
+              </div>
+
+              <!-- Item 2 -->
+              <div class="pos-product-card" style="border-color: var(--primary);">
+                <div class="pos-product-icon" style="background-color: var(--accent-bg); color: var(--primary-dark);">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="2" width="12" height="20" rx="4"/></svg>
+                </div>
+                <div class="pos-product-name">5-Gal Slim Refill</div>
+                <div class="pos-product-meta">With Faucet Tap • Purified</div>
+                <div class="pos-product-footer">
+                  <div class="pos-product-price">₱35.00</div>
+                  <span class="badge badge-success">In Cart (3)</span>
+                </div>
+              </div>
+
+              <!-- Item 3 -->
+              <div class="pos-product-card">
+                <div class="pos-product-icon">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                </div>
+                <div class="pos-product-name">Alkaline 5-Gal Refill</div>
+                <div class="pos-product-meta">pH 9.5 Hydro-Mineralized</div>
+                <div class="pos-product-footer">
+                  <div class="pos-product-price">₱50.00</div>
+                  <span class="badge badge-primary">+ Add</span>
+                </div>
+              </div>
+
+              <!-- Item 4 -->
+              <div class="pos-product-card">
+                <div class="pos-product-icon">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 2h8v4H8zM7 6h10v14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2z"/></svg>
+                </div>
+                <div class="pos-product-name">1-Gal (4L) Bottle Refill</div>
+                <div class="pos-product-meta">Pocket Container</div>
+                <div class="pos-product-footer">
+                  <div class="pos-product-price">₱15.00</div>
+                  <span class="badge badge-primary">+ Add</span>
+                </div>
+              </div>
+
+              <!-- Item 5 -->
+              <div class="pos-product-card">
+                <div class="pos-product-icon">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+                </div>
+                <div class="pos-product-name">New 5-Gal Blue Gallon</div>
+                <div class="pos-product-meta">Food-grade Polycarbonate</div>
+                <div class="pos-product-footer">
+                  <div class="pos-product-price">₱220.00</div>
+                  <span class="badge badge-primary">+ Add</span>
+                </div>
+              </div>
+
+              <!-- Item 6 -->
+              <div class="pos-product-card">
+                <div class="pos-product-icon">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg>
+                </div>
+                <div class="pos-product-name">Cap Seals (100 pcs)</div>
+                <div class="pos-product-meta">AquaFlow Branded Shrink</div>
+                <div class="pos-product-footer">
+                  <div class="pos-product-price">₱45.00</div>
+                  <span class="badge badge-primary">+ Add</span>
+                </div>
+              </div>
+
+              <!-- Item 7 -->
+              <div class="pos-product-card">
+                <div class="pos-product-icon">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v8m0 0l4-4m-4 4L8 6m4 12v4"/></svg>
+                </div>
+                <div class="pos-product-name">Dispenser Faucet Tap</div>
+                <div class="pos-product-meta">Push-type Food grade</div>
+                <div class="pos-product-footer">
+                  <div class="pos-product-price">₱65.00</div>
+                  <span class="badge badge-primary">+ Add</span>
+                </div>
+              </div>
+
+              <!-- Item 8 -->
+              <div class="pos-product-card">
+                <div class="pos-product-icon">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 11V6a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v5m12 0H6m12 0v7a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2v-7"/></svg>
+                </div>
+                <div class="pos-product-name">Gallon Handle Lifter</div>
+                <div class="pos-product-meta">Ergonomic Carrier Tool</div>
+                <div class="pos-product-footer">
+                  <div class="pos-product-price">₱55.00</div>
+                  <span class="badge badge-primary">+ Add</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT: LIVE CHECKOUT CART DOCKET -->
+          <div class="pos-docket">
+            <div class="pos-docket-header">
+              <div>
+                <strong style="font-size: 1rem;">Current Order Docket</strong>
+                <div style="font-size: 0.74rem; color: var(--text-muted);">Receipt Slip: #SLP-1049</div>
+              </div>
+              <a href="#" class="btn btn-ghost btn-sm" style="color: var(--danger);">Clear All</a>
+            </div>
+
+            <!-- Customer Assignment -->
+            <div style="padding: var(--space-3) var(--space-4); border-bottom: 1px solid var(--border-color); background-color: var(--bg-surface-alt);">
+              <label class="form-label" style="font-size: 0.75rem; margin-bottom: 4px;">Assign Customer / Account</label>
+              <div style="display: flex; gap: var(--space-2);">
+                <select class="form-control" style="font-size: 0.82rem; padding: 6px 10px;">
+                  <option value="walkin">Walk-in Customer (Cash)</option>
+                  <option value="juan" selected>Mang Juan's Sari-Sari Store (#CUST-001)</option>
+                  <option value="maria">Maria Santos (Regular Household)</option>
+                  <option value="commercial">Pasig City Hall Canteen (Commercial)</option>
+                </select>
+                <a href="customers.html#add-customer-modal" class="btn btn-secondary btn-sm" title="Register New Customer">+</a>
+              </div>
+            </div>
+
+            <!-- Items In Cart -->
+            <div class="pos-cart-items">
+              <!-- Item Row 1 -->
+              <div class="cart-item-row">
+                <div class="cart-item-info">
+                  <div class="cart-item-title">5-Gal Slim Container Refill</div>
+                  <div class="cart-item-sub">₱35.00 / gallon</div>
+                </div>
+                <div class="qty-control">
+                  <button type="button" class="qty-btn" aria-label="Decrease quantity">-</button>
+                  <span class="qty-val">3</span>
+                  <button type="button" class="qty-btn" aria-label="Increase quantity">+</button>
+                </div>
+                <div class="cart-item-total">₱105.00</div>
+              </div>
+
+              <!-- Item Row 2 -->
+              <div class="cart-item-row">
+                <div class="cart-item-info">
+                  <div class="cart-item-title">Round 5-Gal Cap Seals (3pcs)</div>
+                  <div class="cart-item-sub">₱10.00 / unit</div>
+                </div>
+                <div class="qty-control">
+                  <button type="button" class="qty-btn" aria-label="Decrease quantity">-</button>
+                  <span class="qty-val">3</span>
+                  <button type="button" class="qty-btn" aria-label="Increase quantity">+</button>
+                </div>
+                <div class="cart-item-total">₱30.00</div>
+              </div>
+            </div>
+
+            <!-- Payment Selector -->
+            <div class="pos-payment-selector">
+              <span class="form-label" style="font-size: 0.75rem;">Payment Method</span>
+              <div class="payment-radio-group">
+                <label>
+                  <input type="radio" name="pay_method" value="cash" checked>
+                  <span class="payment-radio-label">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2"/></svg>
+                    <span>Cash</span>
+                  </span>
+                </label>
+                <label>
+                  <input type="radio" name="pay_method" value="gcash">
+                  <span class="payment-radio-label">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+                    <span>GCash</span>
+                  </span>
+                </label>
+                <label>
+                  <input type="radio" name="pay_method" value="maya">
+                  <span class="payment-radio-label">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+                    <span>Maya</span>
+                  </span>
+                </label>
+                <label>
+                  <input type="radio" name="pay_method" value="credit">
+                  <span class="payment-radio-label">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    <span>Utang</span>
+                  </span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Discount Checkbox & Computations -->
+            <div class="pos-totals-box">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+                <label style="display: inline-flex; align-items: center; gap: 6px; font-size: 0.76rem; cursor: pointer;">
+                  <input type="checkbox" style="accent-color: var(--primary);">
+                  <span>Senior Citizen / PWD (20% Disc)</span>
+                </label>
+                <span class="badge badge-neutral">No VAT</span>
+              </div>
+
+              <div class="pos-total-row">
+                <span>Subtotal (6 items)</span>
+                <span>₱135.00</span>
+              </div>
+              <div class="pos-total-row">
+                <span>Delivery Charge</span>
+                <span>₱0.00 (Free)</span>
+              </div>
+              <div class="pos-total-row grand">
+                <span>Total Amount Due</span>
+                <span style="color: var(--primary);">₱135.00</span>
+              </div>
+            </div>
+
+            <!-- Bottom Actions -->
+            <div style="padding: var(--space-4); background-color: var(--bg-surface); display: flex; flex-direction: column; gap: var(--space-2);">
+              <a href="#complete-modal" class="btn btn-primary btn-block btn-lg" style="font-size: 1.05rem;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                <span>Complete Sale (₱135.00)</span>
+              </a>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2);">
+                <button type="button" class="btn btn-outline btn-sm">Hold Order</button>
+                <button type="button" onclick="window.print()" class="btn btn-secondary btn-sm">Print Receipt</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- PURE CSS MODAL: SALE COMPLETED RECEIPT CONFIRMATION (:TARGET) -->
+  <div id="complete-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title" style="display: flex; align-items: center; gap: 8px; color: var(--success);">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="9 12 11 14 15 10"/></svg>
+          <span>Transaction Completed!</span>
+        </h3>
+        <a href="#" class="modal-close-btn">&times;</a>
+      </div>
+      <div class="modal-body">
+        <div style="text-align: center; margin-bottom: var(--space-4);">
+          <div style="font-size: 1.8rem; font-weight: 800; color: var(--primary);">₱135.00</div>
+          <div style="font-size: 0.85rem; color: var(--text-muted);">Payment Method: <strong>Cash (Exact Amount)</strong></div>
+          <div style="font-size: 0.78rem; color: var(--text-muted);">Slip #SLP-1049 • Cashier: Maria Santos</div>
+        </div>
+
+        <div style="background-color: var(--bg-surface-alt); border-radius: var(--radius-md); padding: var(--space-4); font-family: monospace; font-size: 0.82rem;">
+          <div style="text-align: center; font-weight: bold; margin-bottom: 4px;">AQUAFLOW WATER REFILLING</div>
+          <div style="text-align: center; font-size: 0.75rem; margin-bottom: 8px;">Brgy. San Antonio, Pasig City • DOH Permit #0941</div>
+          <div style="border-top: 1px dashed var(--border-color); padding: 4px 0;">3x 5-Gal Slim Refill ................ ₱105.00</div>
+          <div style="padding: 4px 0;">3x Cap Seals ........................ ₱30.00</div>
+          <div style="border-top: 1px dashed var(--border-color); padding-top: 4px; font-weight: bold; display: flex; justify-content: space-between;">
+            <span>TOTAL AMOUNT PAID:</span>
+            <span>₱135.00</span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <a href="#" class="btn btn-secondary">Done & Next Order</a>
+        <a href="#" class="btn btn-primary" onclick="window.print()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          <span>Print Slip Receipt</span>
+        </a>
+      </div>
+    </div>
+  </div>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
