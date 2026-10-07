@@ -1,6 +1,9 @@
-# Ignore backend and local files for Vercel static frontend deployment
+# Ignore backend, python environments, and local files for Vercel static deployment
 backend/
 requirements/
+requirements.txt
+runtime.txt
+.python-version
 render.yaml
 run_project.sh
 *.log
