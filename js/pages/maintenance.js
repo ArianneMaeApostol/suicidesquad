@@ -126,16 +126,18 @@ async function loadWaterTestLogs() {
 
   tbody.innerHTML = tests
     .map((t) => {
-      const isPassed = t.status === 'passed' || Number(t.tds_ppm) <= 15;
+      const tds = t.tds_ppm ?? t.tds ?? 0;
+      const ph = t.ph_level ?? t.ph ?? '7.2';
+      const isPassed = t.status === 'passed' || t.status === 'pass' || Number(tds) <= 15;
       const statusBadge = isPassed
         ? '<span class="badge badge-success">Passed PNSDW</span>'
         : '<span class="badge badge-danger">Failed</span>';
 
       return `
         <tr>
-          <td><strong>${formatDate(t.tested_at)}</strong></td>
-          <td><strong style="color: var(--primary);">${t.tds_ppm || 0} ppm</strong></td>
-          <td>${t.ph_level || '7.2'}</td>
+          <td><strong>${formatDate(t.tested_at || t.created_at || t.sample_date)}</strong></td>
+          <td><strong style="color: var(--primary);">${tds} ppm</strong></td>
+          <td>${ph}</td>
           <td><span class="badge ${t.coliform_passed ? 'badge-success' : 'badge-danger'}">${t.coliform_passed ? 'Negative' : 'Positive'}</span></td>
           <td>${escapeHTML(t.tested_by || 'Maria Santos')}</td>
           <td>
@@ -246,7 +248,7 @@ function setupTestLogModal(profile) {
 
     showToast('Water test log recorded successfully!', 'success');
     form.reset();
-    closeModal();
+    closeModal(modal);
     loadWaterTestLogs();
   });
 }

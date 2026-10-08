@@ -46,12 +46,19 @@ class MaintenanceTaskIn(BaseModel):
 
 
 class WaterTestIn(BaseModel):
-    branch_id: str
+    branch_id: Optional[str] = None
     ph: Optional[float] = None
+    ph_level: Optional[float] = None
     tds: Optional[float] = None
+    tds_ppm: Optional[float] = None
     bacteria_result: Optional[str] = "Negative"
-    result: str = "pass"
+    coliform_passed: Optional[bool] = None
+    result: Optional[str] = "pass"
+    status: Optional[str] = None
     certificate_path: Optional[str] = None
+    attachment_url: Optional[str] = None
+    laboratory: Optional[str] = "DOH Accredited Water Testing Lab"
+    remarks: Optional[str] = None
 
 
 class PermitIn(BaseModel):
@@ -197,10 +204,21 @@ async def list_water_tests(
 ):
     bid = branch_id or current_user.get("branch_id")
     if bid and current_user["role"] != "owner":
-        return await db.fetch_all("SELECT * FROM water_tests WHERE branch_id = $1 ORDER BY sample_date DESC", str(bid))
+        tests = await db.fetch_all("SELECT * FROM water_tests WHERE branch_id = $1 ORDER BY sample_date DESC, created_at DESC", str(bid))
     elif branch_id:
-        return await db.fetch_all("SELECT * FROM water_tests WHERE branch_id = $1 ORDER BY sample_date DESC", str(branch_id))
-    return await db.fetch_all("SELECT * FROM water_tests ORDER BY sample_date DESC")
+        tests = await db.fetch_all("SELECT * FROM water_tests WHERE branch_id = $1 ORDER BY sample_date DESC, created_at DESC", str(branch_id))
+    else:
+        tests = await db.fetch_all("SELECT * FROM water_tests ORDER BY sample_date DESC, created_at DESC")
+
+    for t in tests:
+        t["tds_ppm"] = t.get("tds") or 0
+        t["ph_level"] = t.get("ph") or 7.0
+        t["status"] = t.get("result") or ("passed" if (t.get("tds") and t.get("tds") <= 15) else "failed")
+        t["attachment_url"] = t.get("certificate_path")
+        t["coliform_passed"] = (t.get("bacteria_result") or "Negative").lower() == "negative"
+        t["tested_at"] = t.get("created_at") or t.get("sample_date")
+        t["tested_by"] = current_user.get("full_name") or "Maria Santos"
+    return tests
 
 
 @router.post("/water-tests", status_code=201)
@@ -209,15 +227,36 @@ async def create_water_test(
     db: Database = Depends(get_db),
     current_user: dict = Depends(get_current_user),
 ):
+    bid = body.branch_id or current_user.get("branch_id")
+    ph = body.ph if body.ph is not None else body.ph_level
+    tds = body.tds if body.tds is not None else body.tds_ppm
+
+    bacteria = body.bacteria_result
+    if body.coliform_passed is not None:
+        bacteria = "Negative" if body.coliform_passed else "Positive"
+
+    result = body.result or body.status or ("pass" if (tds is not None and tds <= 15) else "fail")
+    cert = body.certificate_path or body.attachment_url
+
     query = """
-        INSERT INTO water_tests (branch_id, ph, tds, bacteria_result, result, certificate_path)
-        VALUES ($1, $2, $3, $4, $5, $6)
+        INSERT INTO water_tests (branch_id, ph, tds, bacteria_result, result, certificate_path, laboratory, remarks)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
         RETURNING *
     """
-    return await db.fetch_one(
+    created = await db.fetch_one(
         query,
-        body.branch_id, body.ph, body.tds, body.bacteria_result, body.result, body.certificate_path
+        str(bid) if bid else None, ph, tds, bacteria, result, cert,
+        body.laboratory or "DOH Accredited Water Testing Lab", body.remarks
     )
+    if created:
+        created["tds_ppm"] = created.get("tds") or 0
+        created["ph_level"] = created.get("ph") or 7.0
+        created["status"] = created.get("result")
+        created["attachment_url"] = created.get("certificate_path")
+        created["coliform_passed"] = (created.get("bacteria_result") or "Negative").lower() == "negative"
+        created["tested_at"] = created.get("created_at") or created.get("sample_date")
+        created["tested_by"] = current_user.get("full_name") or "Maria Santos"
+    return created
 
 
 @router.get("/permits")
@@ -266,4 +305,5 @@ async def upload_file(
     with open(filepath, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
 
-    return {"path": f"/uploads/{filename}", "filename": filename}
+    url_path = f"/uploads/{filename}"
+    return {"path": url_path, "url": url_path, "filename": filename}
