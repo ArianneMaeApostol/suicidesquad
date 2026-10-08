@@ -15,11 +15,12 @@ router = APIRouter(prefix="/api/expenses", tags=["expenses"])
 
 
 class ExpenseIn(BaseModel):
-    branch_id: str
+    branch_id: Optional[str] = None
     category: str  # utilities, supplies, salaries, rent, maintenance, other
     description: str
     amount: float
     payment_method: Optional[str] = "cash"
+    payment_mode: Optional[str] = None
     reference_no: Optional[str] = None
     date: Optional[str] = None
 
@@ -73,19 +74,32 @@ async def create_expense(
     db: Database = Depends(get_db),
     current_user: dict = Depends(get_current_user),
 ):
-    expense_date = body.date or datetime.now().strftime("%Y-%m-%d")
+    if body.amount <= 0:
+        raise HTTPException(status_code=400, detail="Expense amount must be greater than ₱0.00")
+
+    bid = body.branch_id or current_user.get("branch_id")
+    pay_method = body.payment_method or body.payment_mode or "cash"
+
+    # Safely parse date into a datetime.date object for asyncpg
+    expense_date = datetime.now(timezone.utc).date()
+    if body.date:
+        try:
+            cleaned_date = body.date.split("T")[0]
+            expense_date = datetime.strptime(cleaned_date, "%Y-%m-%d").date()
+        except Exception:
+            expense_date = datetime.now(timezone.utc).date()
 
     query = """
         INSERT INTO expenses (
             branch_id, category, description, amount, payment_method,
             reference_no, date, recorded_by, recorder_name
         )
-        VALUES ($1, $2, $3, $4, $5, $6, $7::date, $8, $9)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
         RETURNING *
     """
     return await db.fetch_one(
         query,
-        body.branch_id, body.category, body.description, float(body.amount),
-        body.payment_method, body.reference_no, expense_date,
-        str(current_user["id"]), current_user.get("full_name")
+        str(bid) if bid else None, body.category, body.description, float(body.amount),
+        pay_method, body.reference_no, expense_date,
+        str(current_user["id"]), current_user.get("full_name") or "Staff"
     )

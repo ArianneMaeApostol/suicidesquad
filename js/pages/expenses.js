@@ -140,8 +140,15 @@ function setupExpenseModal(profile) {
     const payMode = document.getElementById('exp-paymode')?.value || 'cash';
     const submitBtn = form.querySelector('button[type="submit"]');
 
-    if (!desc || amount <= 0) {
-      showToast('Please enter description and valid expense amount.', 'warning');
+    if (amount <= 0) {
+      showToast('Please enter an expense amount greater than ₱0.00.', 'warning');
+      document.getElementById('exp-amount')?.focus();
+      return;
+    }
+
+    if (!desc) {
+      showToast('Please provide a description or official receipt #.', 'warning');
+      document.getElementById('exp-desc')?.focus();
       return;
     }
 
@@ -152,6 +159,7 @@ function setupExpenseModal(profile) {
       category,
       amount,
       description: desc,
+      payment_method: payMode,
       payment_mode: payMode,
       encoded_by: profile?.full_name || 'Staff',
       date: new Date().toISOString()
@@ -164,9 +172,9 @@ function setupExpenseModal(profile) {
       return;
     }
 
-    showToast('Expense voucher recorded successfully!', 'success');
+    showToast(`Expense voucher of ${formatPHP(amount)} recorded!`, 'success');
     form.reset();
-    closeModal();
+    closeModal(modal);
     loadCashComparison();
     loadExpensesTable();
   });
