@@ -246,7 +246,7 @@ function bindLogoutActions() {
 async function loadPageModule(page, context) {
   if (!page) return;
   try {
-    const module = await import(`./pages/${page}.js`);
+    const module = await import(`./pages/${page}.js?t=${Date.now()}`);
     if (module && typeof module.init === 'function') {
       await module.init(context);
     }

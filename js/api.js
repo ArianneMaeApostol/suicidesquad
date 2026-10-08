@@ -3,7 +3,7 @@
  * Standardized data access layer communicating with the Python FastAPI + MongoDB backend.
  * Every function maintains the contract: returns { data, error }.
  */
-import { API_BASE_URL, getToken, getStoredBranchId } from './config.js';
+import { API_BASE_URL, getToken, getStoredBranchId, setStoredBranchId } from './config.js';
 import { getCurrentProfile } from './auth.js';
 
 /**
@@ -465,8 +465,8 @@ export async function createStockMovement(movementData) {
       branch_id: movementData.branch_id,
       item_id: movementData.item_id,
       type: movementData.type,
-      qty: Number(movementData.qty),
-      note: movementData.note || ''
+      qty: Number(movementData.qty ?? movementData.quantity ?? 0),
+      note: movementData.note ?? movementData.notes ?? ''
     })
   });
 }
@@ -522,14 +522,24 @@ export async function addWaterTest(testData, file = null) {
       body: formData
     });
     if (uploadErr) return { data: null, error: uploadErr };
-    certUrl = uploadRes.url;
+    certUrl = uploadRes?.url || uploadRes?.path || null;
   }
 
   return apiFetch('/api/maintenance/water-tests', {
     method: 'POST',
     body: JSON.stringify({
-      ...testData,
-      certificate_path: certUrl
+      branch_id: testData.branch_id,
+      ph: testData.ph_level ?? testData.ph,
+      ph_level: testData.ph_level ?? testData.ph,
+      tds: testData.tds_ppm ?? testData.tds,
+      tds_ppm: testData.tds_ppm ?? testData.tds,
+      bacteria_result: testData.coliform_passed ? 'Negative' : 'Positive',
+      result: (testData.status === 'passed' || (testData.tds_ppm && testData.tds_ppm <= 15)) ? 'pass' : 'fail',
+      status: testData.status,
+      certificate_path: certUrl,
+      attachment_url: certUrl,
+      tested_by: testData.tested_by,
+      tested_at: testData.tested_at
     })
   });
 }
@@ -564,7 +574,16 @@ export async function getExpenses({ branchId, startDate, endDate } = {}) {
 export async function createExpense(expenseData) {
   return apiFetch('/api/expenses', {
     method: 'POST',
-    body: JSON.stringify(expenseData)
+    body: JSON.stringify({
+      branch_id: expenseData.branch_id,
+      category: expenseData.category,
+      amount: Number(expenseData.amount) || 0,
+      description: expenseData.description,
+      payment_method: expenseData.payment_method || expenseData.payment_mode || 'cash',
+      payment_mode: expenseData.payment_mode || expenseData.payment_method || 'cash',
+      date: expenseData.date ? expenseData.date.split('T')[0] : new Date().toISOString().split('T')[0],
+      reference_no: expenseData.reference_no || null
+    })
   });
 }
 
