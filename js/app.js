@@ -153,10 +153,10 @@ async function setupBranchHeader(profile) {
         <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">BRANCH:</span>
         <select id="owner-branch-select" class="form-control" style="font-size: 0.8rem; padding: 3px 8px; width: auto; height: 30px; border-radius: var(--radius-sm); font-weight: 600;">
           ${branchList
-            .map(
-              (b) => `<option value="${escapeHTML(b.id)}" ${b.id === activeId ? 'selected' : ''}>${escapeHTML(b.name)}</option>`
-            )
-            .join('')}
+        .map(
+          (b) => `<option value="${escapeHTML(b.id)}" ${b.id === activeId ? 'selected' : ''}>${escapeHTML(b.name)}</option>`
+        )
+        .join('')}
         </select>
       </div>
     `;
@@ -178,7 +178,7 @@ async function setupBranchHeader(profile) {
   } else {
     // Normal user: display assigned branch name
     const myBranch = branchList.find((b) => b.id === profile.branch_id);
-    const branchName = myBranch ? myBranch.name : 'Pasig Main';
+    const branchName = myBranch ? myBranch.name : 'Maramag Main';
     const text = `Branch: ${branchName}`;
 
     if (customBranchContainer) {

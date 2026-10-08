@@ -128,6 +128,12 @@
             <span class="badge-dot"></span> Shift Cash Draw: ₱8,450.00
           </span>
 
+          <button type="button" class="btn btn-secondary btn-sm" id="btn-recent-sales" style="display: inline-flex; align-items: center; gap: 6px; font-weight: 600;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <span>Shift Sales</span>
+          </button>
+
+
           <label for="theme-toggle" class="theme-toggle-label" title="Toggle Light/Dark Theme">
             <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
             <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
@@ -232,6 +238,29 @@
               </div>
             </div>
 
+            <!-- Cash Tender & Change Due Section (Cash Only) -->
+            <div id="pos-cash-tender-box" style="padding: var(--space-3) var(--space-4); border-top: 1px dashed var(--border-color); background-color: var(--bg-surface-alt);">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                <label for="pos-tender-input" class="form-label" style="font-size: 0.76rem; font-weight: 700; margin: 0;">Cash Tendered (₱)</label>
+                <span id="pos-change-badge" class="badge badge-success" style="font-size: 0.78rem; font-weight: 700;">Change: ₱0.00</span>
+              </div>
+              <div style="display: flex; gap: 6px; margin-bottom: 6px;">
+                <div style="position: relative; flex: 1;">
+                  <span style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-weight: 700; color: var(--text-muted); font-size: 0.9rem;">₱</span>
+                  <input type="number" id="pos-tender-input" class="form-control" placeholder="0.00" min="0" step="any" style="padding-left: 26px; font-size: 0.95rem; font-weight: 700; height: 36px;">
+                </div>
+                <button type="button" class="btn btn-secondary btn-sm" id="btn-tender-exact" style="white-space: nowrap; font-size: 0.78rem; font-weight: 600;">Exact</button>
+              </div>
+              <!-- Fast Denomination Preset Chips -->
+              <div class="pos-tender-presets">
+                <button type="button" class="btn-preset-chip" data-tender="50">₱50</button>
+                <button type="button" class="btn-preset-chip" data-tender="100">₱100</button>
+                <button type="button" class="btn-preset-chip" data-tender="200">₱200</button>
+                <button type="button" class="btn-preset-chip" data-tender="500">₱500</button>
+                <button type="button" class="btn-preset-chip" data-tender="1000">₱1,000</button>
+              </div>
+            </div>
+
             <!-- Discount Checkbox & Computations -->
             <div class="pos-totals-box">
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
@@ -270,8 +299,6 @@
             </div>
           </div>
         </div>
-          </div>
-        </div>
       </main>
     </div>
   </div>
@@ -293,7 +320,7 @@
           <div style="font-size: 0.78rem; color: var(--text-muted);">Slip #SLP-1049 • Cashier: Maria Santos</div>
         </div>
 
-        <div style="background-color: var(--bg-surface-alt); border-radius: var(--radius-md); padding: var(--space-4); font-family: monospace; font-size: 0.82rem;">
+        <div class="printable-receipt" style="background-color: var(--bg-surface-alt); border-radius: var(--radius-md); padding: var(--space-4); font-family: monospace; font-size: 0.82rem;">
           <div style="text-align: center; font-weight: bold; margin-bottom: 4px;">AQUAFLOW WATER REFILLING</div>
           <div style="text-align: center; font-size: 0.75rem; margin-bottom: 8px;">Brgy. San Antonio, Pasig City • DOH Permit #0941</div>
           <div style="border-top: 1px dashed var(--border-color); padding: 4px 0;">3x 5-Gal Slim Refill ................ ₱105.00</div>
@@ -348,6 +375,36 @@
       </form>
     </div>
   </div>
+
+  <!-- MODAL: RECENT SHIFT TRANSACTIONS & VOID SUPERVISOR FLOW -->
+  <div id="recent-sales-modal" class="modal-overlay">
+    <div class="modal-card" style="max-width: 720px;">
+      <div class="modal-header">
+        <h3 class="modal-title" style="display: flex; align-items: center; gap: 8px;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span>Shift Transactions & Receipts</span>
+        </h3>
+        <a href="#" class="modal-close-btn">&times;</a>
+      </div>
+      <div class="modal-body" style="padding: var(--space-4);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <span style="font-size: 0.8rem; color: var(--text-muted);" id="recent-sales-count-lbl">Showing latest transactions</span>
+          <button type="button" class="btn btn-secondary btn-sm" id="btn-refresh-recent-sales">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+            <span>Refresh</span>
+          </button>
+        </div>
+        <div id="recent-sales-list" style="display: flex; flex-direction: column; gap: 10px; max-height: 480px; overflow-y: auto;">
+          <div style="text-align: center; padding: 32px; color: var(--text-muted);">Loading recent transactions...</div>
+        </div>
+      </div>
+      <div class="modal-footer" style="justify-content: space-between;">
+        <span style="font-size: 0.75rem; color: var(--text-muted);">Voiding requires Manager / Owner authorization (PIN: 1234).</span>
+        <a href="#" class="btn btn-secondary">Close</a>
+      </div>
+    </div>
+  </div>
+
 
   <script type="module" src="js/app.js"></script>
 </body>

@@ -92,6 +92,7 @@ export async function rpcCreateSale({
   items,
   paymentMethod,
   amountPaid,
+  discount = 0,
   containersLent = 0,
   containersBack = 0
 }) {
@@ -104,6 +105,7 @@ export async function rpcCreateSale({
       items: items,
       payment_method: paymentMethod,
       amount_paid: Number(amountPaid) || 0,
+      discount: Number(discount) || 0,
       containers_lent: Number(containersLent) || 0,
       containers_back: Number(containersBack) || 0
     })
@@ -128,12 +130,16 @@ export async function rpcRecordPayment({ customerId, amount, method, reference =
 /**
  * Voids an existing sale.
  */
-export async function rpcVoidSale(saleId) {
+export async function rpcVoidSale(saleId, reason = 'Voided by supervisor', supervisorPasscode = '') {
   return apiFetch(`/api/sales/${saleId}/void`, {
     method: 'POST',
-    body: JSON.stringify({ reason: 'Voided by supervisor' })
+    body: JSON.stringify({
+      reason: reason || 'Voided by supervisor',
+      supervisor_passcode: supervisorPasscode || undefined
+    })
   });
 }
+
 
 // ============================================================================
 // 2. SHIFTS

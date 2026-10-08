@@ -62,13 +62,13 @@ async def seed():
     print("Creating branches...")
     b1_id = await conn.fetchval("""
         INSERT INTO branches (name, address, barangay, city, province, phone, tin, is_active)
-        VALUES ('AquaFlow Pasig Main', '128 Shaw Boulevard, Barangay Kapitolyo', 'Kapitolyo', 'Pasig City', 'Metro Manila', '+63 917 123 4567', '123-456-789-000', TRUE)
+        VALUES ('AquaFlow Maramag Main', '128 Shaw Boulevard, Barangay Kapitolyo', 'Kapitolyo', 'Pasig City', 'Metro Manila', '+63 917 123 4567', '123-456-789-000', TRUE)
         RETURNING id;
     """)
 
     b2_id = await conn.fetchval("""
         INSERT INTO branches (name, address, barangay, city, province, phone, tin, is_active)
-        VALUES ('AquaFlow Cainta Branch', '45 Ortigas Avenue Extension', 'San Isidro', 'Cainta', 'Rizal', '+63 918 765 4321', '123-456-789-001', TRUE)
+        VALUES ('AquaFlow Quezon Branch', '45 Ortigas Avenue Extension', 'San Isidro', 'Quezon', 'Rizal', '+63 918 765 4321', '123-456-789-001', TRUE)
         RETURNING id;
     """)
 

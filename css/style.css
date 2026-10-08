@@ -1976,7 +1976,39 @@ body:has(#theme-toggle:checked) .theme-toggle-label .moon-icon { display: block;
   color: var(--primary-dark);
 }
 
+.pos-tender-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.btn-preset-chip {
+  padding: 4px 10px;
+  font-size: 0.76rem;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+  background: var(--bg-surface);
+  color: var(--text-main);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.btn-preset-chip:hover {
+  background: var(--primary-light, rgba(14, 165, 233, 0.1));
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.btn-preset-chip.active {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}
+
 .pos-totals-box {
+
   padding: var(--space-4);
   border-top: 1px solid var(--border-color);
   background-color: var(--bg-surface-alt);
@@ -2097,43 +2129,112 @@ body:has(#theme-toggle:checked) .theme-toggle-label .moon-icon { display: block;
    9. PRINT STYLESHEET (@MEDIA PRINT)
    -------------------------------------------------------------------------- */
 @media print {
-  body {
-    background: #fff !important;
-    color: #000 !important;
+  @page {
+    size: 80mm auto;
+    margin: 0;
   }
 
+  html, body {
+    background: #fff !important;
+    color: #000 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 11px !important;
+  }
+
+  /* Hide entire application navigation, layout, sidebars, and desktop controls */
   .sidebar,
   .topbar,
-  .page-header .header-actions,
+  .page-header,
   .pagination,
-  .modal-overlay,
   .mobile-menu-btn,
-  .btn:not(.print-keep),
-  .theme-toggle-label {
+  .theme-toggle-label,
+  .pos-catalog,
+  .pos-docket,
+  .btn,
+  .modal-close-btn,
+  .modal-footer,
+  .modal-header,
+  .toast-container,
+  #pos-cash-tender-box,
+  #quick-custom-sale,
+  #recent-sales-modal,
+  #open-shift-modal,
+  #close-shift-modal {
     display: none !important;
   }
 
-  .app-main {
-    margin-left: 0 !important;
-  }
-
+  .app-main,
   .content-area {
+    margin: 0 !important;
     padding: 0 !important;
     max-width: 100% !important;
+    background: transparent !important;
   }
 
-  .card {
-    border: 1px solid #ccc !important;
+  /* Target receipt modals and ensure content is visible and fills thermal width */
+  .modal-overlay:target,
+  .modal-overlay.print-receipt-active,
+  #complete-modal {
+    display: block !important;
+    position: static !important;
+    background: transparent !important;
+    backdrop-filter: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    opacity: 1 !important;
+  }
+
+  .modal-card {
+    position: static !important;
+    border: none !important;
     box-shadow: none !important;
-    break-inside: avoid;
+    width: 100% !important;
+    max-width: 80mm !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    background: transparent !important;
+    overflow: visible !important;
+    transform: none !important;
+    animation: none !important;
   }
 
-  /* Printable POS Receipt Simulation */
+  .modal-body {
+    padding: 0 !important;
+  }
+
+  .modal-body > div:first-child {
+    display: none !important; /* Hide web badge summary banner in print */
+  }
+
+  /* Printable POS Receipt: ESC/POS Thermal roll typography */
   .printable-receipt {
-    width: 80mm !important;
+    display: block !important;
+    width: 74mm !important;
     margin: 0 auto !important;
-    font-family: monospace !important;
-    padding: 10px !important;
+    padding: 5mm 2mm !important;
+    font-family: 'Courier New', Courier, monospace !important;
+    font-size: 11px !important;
+    line-height: 1.35 !important;
+    color: #000 !important;
+    background: #fff !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    page-break-inside: avoid !important;
+  }
+
+  .printable-receipt * {
+    color: #000 !important;
+    background: transparent !important;
+    border-color: #000 !important;
+  }
+
+  .printable-receipt .receipt-dashed {
+    border-top: 1px dashed #000 !important;
+    margin: 6px 0 !important;
   }
 }
 

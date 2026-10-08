@@ -11,10 +11,13 @@ import {
   rpcCloseShift,
   getProducts,
   getCustomers,
-  rpcCreateSale
+  rpcCreateSale,
+  getRecentSales,
+  rpcVoidSale
 } from '../api.js';
 import {
   formatPHP,
+  formatDate,
   escapeHTML,
   debounce,
   showToast,
@@ -60,9 +63,16 @@ export async function init({ profile }) {
   // 8. Shift Management Modal Bindings
   setupShiftModal();
 
-  // 9. Initial Render of Cart Docket
+  // 9. Cash Tender & Change Due Calculator
+  setupCashTender();
+
+  // 10. Recent Transactions & Void Modal
+  setupRecentSalesModal();
+
+  // 11. Initial Render of Cart Docket
   renderCart();
 }
+
 
 /**
  * Checks if a shift is currently open; if not, alerts cashier and prompts open shift modal.
@@ -503,6 +513,7 @@ function renderCart() {
     if (subtotalEl) subtotalEl.textContent = '₱0.00';
     if (grandTotalEl) grandTotalEl.textContent = '₱0.00';
     if (completeBtn) completeBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg><span>Complete Sale (₱0.00)</span>';
+    updateCashChangeCalculation(0);
     return;
   }
 
@@ -543,6 +554,9 @@ function renderCart() {
   if (grandTotalEl) grandTotalEl.textContent = formatPHP(grandTotal);
   if (completeBtn) completeBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg><span>Complete Sale (${formatPHP(grandTotal)})</span>`;
 
+  // Update dynamic tender calculation based on new grandTotal
+  updateCashChangeCalculation(grandTotal);
+
   // Quantity controls
   cartContainer.querySelectorAll('.cart-item-row').forEach((row) => {
     const pId = row.dataset.id;
@@ -554,8 +568,12 @@ function renderCart() {
     clearBtn.onclick = (e) => {
       e.preventDefault();
       cart = [];
+      const tenderInput = document.getElementById('pos-tender-input');
+      if (tenderInput) tenderInput.value = '';
+      document.querySelectorAll('.btn-preset-chip').forEach(c => c.classList.remove('active'));
       renderProductGrid();
       renderCart();
+      updateCashChangeCalculation(0);
     };
   }
 }
@@ -611,6 +629,33 @@ function setupCartActions() {
         grandTotal = Math.max(0, rawSubtotal - discountAmount);
       }
 
+      let amountPaid = 0;
+      let changeAmount = 0;
+
+      if (selectedPay === 'cash') {
+        const tenderInput = document.getElementById('pos-tender-input');
+        const tenderStr = tenderInput?.value.trim() || '';
+        const tenderedVal = tenderStr ? parseFloat(tenderStr) : grandTotal;
+        if (isNaN(tenderedVal) || tenderedVal < grandTotal) {
+          showToast(`Tendered cash (${formatPHP(tenderedVal || 0)}) is less than total due (${formatPHP(grandTotal)}).`, 'warning');
+          if (tenderInput) {
+            tenderInput.focus();
+            tenderInput.style.borderColor = 'var(--danger)';
+            setTimeout(() => (tenderInput.style.borderColor = ''), 2500);
+          }
+          return;
+        }
+        amountPaid = tenderedVal;
+        changeAmount = Math.max(0, amountPaid - grandTotal);
+      } else if (selectedPay === 'credit') {
+        amountPaid = 0;
+        changeAmount = 0;
+      } else {
+        // GCash or Maya digital wallet
+        amountPaid = grandTotal;
+        changeAmount = 0;
+      }
+
       const containersLent = Number(document.getElementById('pos-lent-qty')?.value) || 0;
       const containersBack = Number(document.getElementById('pos-back-qty')?.value) || 0;
 
@@ -620,8 +665,6 @@ function setupCartActions() {
         unit_price: getProductPriceForCustomer(i.product),
         subtotal: getProductPriceForCustomer(i.product) * i.qty
       }));
-
-      const amountPaid = selectedPay === 'credit' ? 0 : grandTotal;
 
       setButtonLoading(completeActionTrigger, true, 'Processing Sale...');
 
@@ -648,26 +691,33 @@ function setupCartActions() {
         // Keep cart snapshot for the receipt modal
         const purchasedItems = [...cart];
 
-        // Render Slip Modal with real purchased items
-        populateSlipReceiptModal(saleId, grandTotal, selectedPay, containersLent, containersBack, purchasedItems);
+        // Render Slip Modal with real purchased items and cash tender computation
+        populateSlipReceiptModal(saleId, grandTotal, selectedPay, containersLent, containersBack, purchasedItems, amountPaid, changeAmount);
         openModal('complete-modal');
 
         // Reset cart docket & controls
         cart = [];
         const lentInput = document.getElementById('pos-lent-qty');
         const backInput = document.getElementById('pos-back-qty');
+        const tenderInput = document.getElementById('pos-tender-input');
         if (lentInput) lentInput.value = '0';
         if (backInput) backInput.value = '0';
+        if (tenderInput) tenderInput.value = '';
+        document.querySelectorAll('.btn-preset-chip').forEach(c => c.classList.remove('active'));
         if (discountCheckbox) discountCheckbox.checked = false;
 
         renderProductGrid();
         renderCart();
+        updateCashChangeCalculation(0);
 
         // Refresh shift badge details
         verifyShiftStatus();
       } catch (err) {
         setButtonLoading(completeActionTrigger, false);
         showToast('Offline or network timeout. Please retry.', 'danger');
+      }
+    });
+  }
       }
     });
   }
@@ -814,11 +864,21 @@ function setupHoldOrder() {
 /**
  * Fills details in the #complete-modal receipt for printing.
  */
-function populateSlipReceiptModal(saleId, total, paymentMethod, lent, back, items = []) {
+function populateSlipReceiptModal(
+  saleId,
+  total,
+  paymentMethod,
+  lent = 0,
+  back = 0,
+  items = [],
+  amountPaid = 0,
+  changeAmount = 0,
+  saleNumber = null
+) {
   const modal = document.getElementById('complete-modal');
   if (!modal) return;
 
-  const slipShort = saleId ? `#SLP-${saleId.slice(0, 6).toUpperCase()}` : '#SLP-1049';
+  const slipShort = saleNumber || (saleId ? `#SLP-${saleId.slice(0, 8).toUpperCase()}` : '#SLP-1049');
   const custName = selectedCustomer ? selectedCustomer.full_name : 'Walk-in Customer';
   const cashierName = currentCashierProfile ? currentCashierProfile.full_name : 'Station Cashier';
   const now = new Date();
@@ -847,14 +907,14 @@ function populateSlipReceiptModal(saleId, total, paymentMethod, lent, back, item
       <div style="text-align: center; margin-bottom: var(--space-4);">
         <div style="font-size: 1.8rem; font-weight: 800; color: var(--primary);">${formatPHP(total)}</div>
         <div style="font-size: 0.85rem; color: var(--text-muted);">Payment: <strong>${paymentMethod.toUpperCase()}</strong></div>
-        <div style="font-size: 0.78rem; color: var(--text-muted);">${slipShort} • Cashier: ${escapeHTML(cashierName)}</div>
+        <div style="font-size: 0.78rem; color: var(--text-muted);">${escapeHTML(slipShort)} • Cashier: ${escapeHTML(cashierName)}</div>
       </div>
 
       <div class="printable-receipt" style="background-color: var(--bg-surface-alt); border-radius: var(--radius-md); padding: var(--space-4); font-family: monospace; font-size: 0.82rem;">
-        <div style="text-align: center; font-weight: bold;">AQUAFLOW WATER REFILLING</div>
+        <div style="text-align: center; font-weight: bold; font-size: 0.95rem;">AQUAFLOW WATER REFILLING</div>
         <div style="text-align: center; font-size: 0.75rem; margin-bottom: 8px;">DOH Permit #0941 • Official Receipt Slip</div>
         <div style="border-top: 1px dashed var(--border-color); padding: 4px 0; display: flex; justify-content: space-between;">
-          <span>Slip: ${slipShort}</span>
+          <span>Slip: ${escapeHTML(slipShort)}</span>
           <span>${dateStr} ${timeStr}</span>
         </div>
         <div style="padding: 2px 0;">Customer: <strong>${escapeHTML(custName)}</strong></div>
@@ -867,10 +927,333 @@ function populateSlipReceiptModal(saleId, total, paymentMethod, lent, back, item
         <div style="border-top: 1px dashed var(--border-color); margin: 6px 0 4px 0;"></div>
         ${itemsRows}
         <div style="border-top: 1px dashed var(--border-color); margin-top: 6px; padding-top: 6px; font-weight: bold; display: flex; justify-content: space-between; font-size: 0.9rem;">
-          <span>TOTAL PAID:</span>
+          <span>TOTAL DUE:</span>
           <span style="color: var(--primary);">${formatPHP(total)}</span>
+        </div>
+        ${
+          paymentMethod === 'cash'
+            ? `
+          <div style="display: flex; justify-content: space-between; padding: 2px 0; font-size: 0.82rem;">
+            <span>CASH TENDERED:</span>
+            <span>${formatPHP(amountPaid || total)}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding: 2px 0; font-size: 0.82rem; font-weight: bold;">
+            <span>CHANGE DUE:</span>
+            <span>${formatPHP(changeAmount)}</span>
+          </div>
+        `
+            : `
+          <div style="display: flex; justify-content: space-between; padding: 2px 0; font-size: 0.82rem;">
+            <span>PAID VIA:</span>
+            <span>${paymentMethod.toUpperCase()}</span>
+          </div>
+        `
+        }
+        <div class="receipt-dashed" style="border-top: 1px dashed var(--border-color); margin-top: 8px; padding-top: 6px; text-align: center; font-size: 0.72rem; color: var(--text-muted);">
+          Thank you for choosing AquaFlow Pure Water!<br>
+          Please keep this slip for your container deposit records.
         </div>
       </div>
     `;
   }
 }
+
+/**
+ * Calculates current grand total of the docket.
+ */
+function getCartGrandTotal() {
+  const discountCheckbox = document.getElementById('pos-discount-check') || document.querySelector('.pos-totals-box input[type="checkbox"]');
+  const rawSubtotal = cart.reduce((sum, i) => sum + getProductPriceForCustomer(i.product) * i.qty, 0);
+  if (discountCheckbox && discountCheckbox.checked) {
+    return Math.max(0, rawSubtotal * 0.8);
+  }
+  return rawSubtotal;
+}
+
+/**
+ * Updates the cash tender box and computes real-time change due.
+ */
+function updateCashChangeCalculation(forcedTotal = null) {
+  const tenderBox = document.getElementById('pos-cash-tender-box');
+  if (!tenderBox) return;
+
+  const selectedPay = document.querySelector('input[name="pay_method"]:checked')?.value || 'cash';
+  if (selectedPay !== 'cash') {
+    tenderBox.style.display = 'none';
+    return;
+  }
+  tenderBox.style.display = 'block';
+
+  const total = forcedTotal !== null ? forcedTotal : getCartGrandTotal();
+  const tenderInput = document.getElementById('pos-tender-input');
+  const changeBadge = document.getElementById('pos-change-badge');
+  if (!changeBadge) return;
+
+  const valStr = tenderInput?.value.trim() || '';
+  if (!valStr || total <= 0) {
+    changeBadge.className = 'badge badge-neutral';
+    changeBadge.textContent = 'Change: ₱0.00';
+    return;
+  }
+
+  const tendered = parseFloat(valStr);
+  if (isNaN(tendered)) {
+    changeBadge.className = 'badge badge-neutral';
+    changeBadge.textContent = 'Change: ₱0.00';
+    return;
+  }
+
+  const change = tendered - total;
+  if (change >= 0) {
+    changeBadge.className = 'badge badge-success';
+    changeBadge.textContent = `Change: ${formatPHP(change)}`;
+  } else {
+    changeBadge.className = 'badge badge-danger';
+    changeBadge.textContent = `Short: -${formatPHP(Math.abs(change))}`;
+  }
+}
+
+/**
+ * Binds quick denomination tender chips and exact payment button.
+ */
+function setupCashTender() {
+  const tenderInput = document.getElementById('pos-tender-input');
+  const exactBtn = document.getElementById('btn-tender-exact');
+  const presetChips = document.querySelectorAll('.btn-preset-chip');
+  const payRadios = document.querySelectorAll('input[name="pay_method"]');
+
+  payRadios.forEach((radio) => {
+    radio.addEventListener('change', () => {
+      updateCashChangeCalculation();
+    });
+  });
+
+  if (tenderInput) {
+    tenderInput.addEventListener('input', () => {
+      presetChips.forEach((c) => c.classList.remove('active'));
+      updateCashChangeCalculation();
+    });
+  }
+
+  if (exactBtn) {
+    exactBtn.addEventListener('click', () => {
+      const total = getCartGrandTotal();
+      if (tenderInput) {
+        tenderInput.value = total > 0 ? total.toFixed(2) : '';
+      }
+      presetChips.forEach((c) => c.classList.remove('active'));
+      updateCashChangeCalculation();
+    });
+  }
+
+  presetChips.forEach((chip) => {
+    chip.addEventListener('click', () => {
+      presetChips.forEach((c) => c.classList.remove('active'));
+      chip.classList.add('active');
+      const val = chip.dataset.tender;
+      if (tenderInput && val) {
+        tenderInput.value = val;
+        updateCashChangeCalculation();
+      }
+    });
+  });
+
+  updateCashChangeCalculation();
+}
+
+/**
+ * Handles the Recent Sales modal and in-POS void workflow with supervisor approval.
+ */
+function setupRecentSalesModal() {
+  const triggerBtn = document.getElementById('btn-recent-sales');
+  const refreshBtn = document.getElementById('btn-refresh-recent-sales');
+
+  if (triggerBtn) {
+    triggerBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      openModal('recent-sales-modal');
+      loadRecentSales();
+    });
+  }
+
+  if (refreshBtn) {
+    refreshBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      loadRecentSales();
+    });
+  }
+}
+
+/**
+ * Loads recent sales for the active branch and populates the modal list.
+ */
+async function loadRecentSales() {
+  const listEl = document.getElementById('recent-sales-list');
+  const countLbl = document.getElementById('recent-sales-count-lbl');
+  if (!listEl) return;
+
+  listEl.innerHTML = '<div style="text-align: center; padding: 32px; color: var(--text-muted);">Loading recent transactions...</div>';
+
+  try {
+    const { data: sales, error } = await getRecentSales({ branchId: activeBranchId, limit: 15 });
+    if (error || !sales) {
+      listEl.innerHTML = '<div style="text-align: center; padding: 24px; color: var(--danger);">Failed to load recent sales.</div>';
+      return;
+    }
+
+    if (sales.length === 0) {
+      listEl.innerHTML = '<div style="text-align: center; padding: 32px; color: var(--text-muted);">No sales recorded for this shift yet.</div>';
+      if (countLbl) countLbl.textContent = '0 transactions recorded';
+      return;
+    }
+
+    if (countLbl) countLbl.textContent = `Showing last ${sales.length} transactions`;
+
+    listEl.innerHTML = sales
+      .map((s) => {
+        const isVoided = Boolean(s.is_voided);
+        const saleDate = formatDate(s.created_at, true);
+        const items = Array.isArray(s.items) ? s.items : [];
+        const itemsSummary =
+          items.length > 0
+            ? items.map((it) => `${it.qty}x ${escapeHTML(it.product_name)} (${formatPHP(it.unit_price)})`).join(', ')
+            : 'Station Refill / Items';
+        const custName = s.customer?.full_name || s.customer_name || 'Walk-in Customer';
+        const cashierName = s.cashier_name || 'Cashier';
+        const isManagerOrOwner = currentCashierProfile && ['owner', 'manager'].includes(currentCashierProfile.role);
+
+        return `
+          <div class="card" style="padding: 12px 14px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-surface); opacity: ${isVoided ? '0.65' : '1'};">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px;">
+              <div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <strong style="font-size: 0.9rem; font-family: monospace;">${escapeHTML(s.sale_number || s.id.slice(0, 8))}</strong>
+                  <span class="badge ${isVoided ? 'badge-danger' : 'badge-success'}" style="font-size: 0.72rem;">
+                    ${isVoided ? 'Voided' : 'Completed'}
+                  </span>
+                  <span class="badge badge-neutral" style="font-size: 0.72rem; text-transform: uppercase;">
+                    ${escapeHTML(s.payment_method)}
+                  </span>
+                </div>
+                <div style="font-size: 0.76rem; color: var(--text-muted); margin-top: 2px;">
+                  ${saleDate} • Cashier: ${escapeHTML(cashierName)} • Cust: <strong>${escapeHTML(custName)}</strong>
+                </div>
+              </div>
+              <div style="text-align: right;">
+                <div style="font-size: 1.1rem; font-weight: 800; color: ${isVoided ? 'var(--text-muted)' : 'var(--primary)'}; text-decoration: ${isVoided ? 'line-through' : 'none'};">
+                  ${formatPHP(s.total)}
+                </div>
+                ${s.payment_method === 'cash' && s.change_amount > 0 ? `<div style="font-size: 0.72rem; color: var(--text-muted);">Change: ${formatPHP(s.change_amount)}</div>` : ''}
+              </div>
+            </div>
+
+            <div style="font-size: 0.78rem; color: var(--text-muted); background: var(--bg-surface-alt); padding: 6px 10px; border-radius: var(--radius-sm); margin: 6px 0;">
+              ${escapeHTML(itemsSummary)}
+            </div>
+
+            ${
+              isVoided && s.void_reason
+                ? `
+              <div style="font-size: 0.75rem; color: var(--danger); font-style: italic; margin-bottom: 6px;">
+                Reason for void: "${escapeHTML(s.void_reason)}"
+              </div>
+            `
+                : ''
+            }
+
+            <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 6px;">
+              <button type="button" class="btn btn-secondary btn-sm btn-reprint-sale" data-id="${escapeHTML(s.id)}" style="font-size: 0.75rem; padding: 4px 10px;">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                <span>Reprint Slip</span>
+              </button>
+              ${
+                !isVoided
+                  ? `
+                <button type="button" class="btn btn-outline btn-sm btn-void-sale" data-id="${escapeHTML(s.id)}" data-number="${escapeHTML(s.sale_number)}" style="color: var(--danger); border-color: var(--danger); font-size: 0.75rem; padding: 4px 10px;">
+                  <span>${isManagerOrOwner ? 'Void Sale' : 'Request Void (PIN)'}</span>
+                </button>
+              `
+                  : ''
+              }
+            </div>
+          </div>
+        `;
+      })
+      .join('');
+
+    // Bind Reprint Slip buttons
+    listEl.querySelectorAll('.btn-reprint-sale').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const saleId = btn.dataset.id;
+        const targetSale = sales.find((x) => x.id === saleId);
+        if (targetSale) {
+          reprintSaleReceipt(targetSale);
+        }
+      });
+    });
+
+    // Bind Void buttons
+    listEl.querySelectorAll('.btn-void-sale').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        const saleId = btn.dataset.id;
+        const saleNumber = btn.dataset.number || 'Sale';
+        const isManagerOrOwner = currentCashierProfile && ['owner', 'manager'].includes(currentCashierProfile.role);
+
+        let reason = prompt(`Enter reason for voiding ${saleNumber}:`, 'Customer order cancelled / error');
+        if (!reason || !reason.trim()) return;
+
+        let pin = '';
+        if (!isManagerOrOwner) {
+          pin = prompt(`Supervisor Authorization Required:\nEnter Supervisor / Manager PIN (Default PIN: 1234):`);
+          if (!pin) {
+            showToast('Void cancelled: Supervisor PIN is required.', 'warning');
+            return;
+          }
+        }
+
+        setButtonLoading(btn, true, 'Voiding...');
+        const { error: voidErr } = await rpcVoidSale(saleId, reason.trim(), pin.trim());
+        setButtonLoading(btn, false);
+
+        if (voidErr) {
+          showToast(voidErr.message || 'Failed to void transaction. Check PIN and permissions.', 'danger');
+          return;
+        }
+
+        showToast(`Transaction ${saleNumber} voided and stock restored to inventory.`, 'success');
+        await loadRecentSales();
+        verifyShiftStatus();
+      });
+    });
+  } catch (err) {
+    listEl.innerHTML = '<div style="text-align: center; padding: 24px; color: var(--danger);">Network timeout loading transactions.</div>';
+  }
+}
+
+/**
+ * Reprints a historical receipt slip.
+ */
+function reprintSaleReceipt(sale) {
+  const modal = document.getElementById('complete-modal');
+  if (!modal) return;
+
+  const items = (sale.items || []).map((it) => ({
+    product: { name: it.product_name, price: it.unit_price },
+    qty: it.qty
+  }));
+
+  populateSlipReceiptModal(
+    sale.id,
+    Number(sale.total),
+    sale.payment_method,
+    sale.containers_lent || 0,
+    sale.containers_back || 0,
+    items,
+    Number(sale.amount_paid || sale.total),
+    Number(sale.change_amount || 0),
+    sale.sale_number
+  );
+
+  openModal('complete-modal');
+}
+
