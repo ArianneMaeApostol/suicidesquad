@@ -10,7 +10,6 @@ export async function init() {
   const form = document.querySelector('form');
   const emailInput = document.getElementById('login-email') || form?.querySelector('input[type="email"]');
   const passwordInput = document.getElementById('login-password') || form?.querySelector('input[type="password"]');
-  const branchSelect = document.getElementById('login-branch');
   const submitBtn = form?.querySelector('button[type="submit"]');
 
   // Check URL query parameters for session expiration notices
