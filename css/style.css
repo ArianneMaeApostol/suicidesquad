@@ -1356,9 +1356,16 @@ body:has(#theme-toggle:checked) .theme-toggle-label .moon-icon { display: block;
   transition: opacity var(--transition-normal);
 }
 
-.modal-overlay:target {
-  display: flex;
-  opacity: 1;
+.modal-overlay:target,
+.modal-overlay.active {
+  display: flex !important;
+  opacity: 1 !important;
+}
+
+.modal-overlay.modal-closed {
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
 }
 
 .modal-card {
@@ -1376,7 +1383,8 @@ body:has(#theme-toggle:checked) .theme-toggle-label .moon-icon { display: block;
   animation: fadeIn 200ms ease;
 }
 
-.modal-overlay:target .modal-card {
+.modal-overlay:target .modal-card,
+.modal-overlay.active .modal-card {
   transform: translateY(0);
 }
 

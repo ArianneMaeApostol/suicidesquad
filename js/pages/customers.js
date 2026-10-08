@@ -229,7 +229,7 @@ function setupAddCustomerModal() {
 
     showToast(`Customer ${fullName} registered successfully!`, 'success');
     form.reset();
-    closeModal();
+    closeModal(modal);
     loadCustomerTable();
   });
 }
@@ -312,8 +312,10 @@ function setupRecordPaymentModal() {
       return;
     }
 
-    showToast('Payment recorded successfully! Balance updated.', 'success');
-    closeModal();
+    showToast(`Payment of ${formatPHP(amount)} recorded! Balance updated.`, 'success');
+    const payForm = modal.querySelector('#quick-payment-form');
+    if (payForm) payForm.reset();
+    closeModal(modal);
     loadCustomerTable();
   });
 }

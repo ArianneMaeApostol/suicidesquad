@@ -138,36 +138,123 @@ export function openModal(modalId) {
   if (!modal) return;
 
   previouslyFocusedElement = document.activeElement;
-  window.location.hash = cleanId;
+
+  // Ensure modal is cleanly activated and unhidden
+  modal.classList.remove('modal-closed');
+  modal.classList.add('active');
+  modal.style.display = 'flex';
+  modal.style.opacity = '1';
+  modal.style.pointerEvents = 'auto';
+
+  // Update hash safely without disruptive jumping
+  if (window.location.hash !== `#${cleanId}`) {
+    try {
+      history.pushState(null, '', `#${cleanId}`);
+    } catch (e) {
+      window.location.hash = cleanId;
+    }
+  }
 
   // Focus the first input or close button
   setTimeout(() => {
-    const focusable = modal.querySelector('input, select, textarea, button, a.modal-close-btn');
+    const focusable = modal.querySelector('input:not([type="hidden"]), select, textarea, button, a.modal-close-btn');
     if (focusable) focusable.focus();
   }, 50);
 }
 
 /**
- * Closes an active modal without altering scroll position.
+ * Closes an active modal reliably across all browsers, removing both :target and inline/class states.
+ * @param {string|HTMLElement|null} [targetModal] Optional specific modal ID or element to close
  */
-export function closeModal() {
-  if (window.location.hash) {
-    window.location.hash = '#_';
-    history.replaceState('', document.title, window.location.pathname + window.location.search);
+export function closeModal(targetModal = null) {
+  const modalsToClose = new Set();
+
+  if (targetModal) {
+    const el = typeof targetModal === 'string' ? document.getElementById(targetModal.replace(/^#/, '')) : targetModal;
+    if (el) modalsToClose.add(el);
   }
+
+  // Also locate currently targeted or active modals
+  const currentHash = window.location.hash ? window.location.hash.replace(/^#/, '') : '';
+  if (currentHash) {
+    const targeted = document.getElementById(currentHash);
+    if (targeted && targeted.classList.contains('modal-overlay')) {
+      modalsToClose.add(targeted);
+    }
+  }
+
+  document.querySelectorAll('.modal-overlay.active, .modal-overlay:target').forEach((m) => {
+    modalsToClose.add(m);
+  });
+
+  // If no specific open modal was found, ensure all modal overlays are hidden
+  if (modalsToClose.size === 0) {
+    document.querySelectorAll('.modal-overlay').forEach((m) => modalsToClose.add(m));
+  }
+
+  modalsToClose.forEach((modal) => {
+    modal.classList.remove('active');
+    modal.classList.add('modal-closed');
+    modal.style.display = 'none';
+    modal.style.opacity = '0';
+    modal.style.pointerEvents = 'none';
+  });
+
+  // Clear hash from address bar and un-target in CSS
+  if (window.location.hash && window.location.hash !== '#') {
+    try {
+      history.pushState(null, '', window.location.pathname + window.location.search);
+    } catch (e) {
+      window.location.hash = '';
+    }
+  }
+
   if (previouslyFocusedElement && typeof previouslyFocusedElement.focus === 'function') {
     previouslyFocusedElement.focus();
     previouslyFocusedElement = null;
   }
 }
 
+// Global modal event listeners for click-outside, close buttons, hash changes, and Escape key
+if (typeof window !== 'undefined') {
+  // 1. Click on backdrop or close button
+  document.addEventListener('click', (e) => {
+    if (e.target.classList && e.target.classList.contains('modal-overlay')) {
+      closeModal(e.target);
+      return;
+    }
+    const closeBtn = e.target.closest('[data-action*="close"], .modal-close-btn, a[href="#"], button[data-dismiss="modal"]');
+    if (closeBtn && closeBtn.closest('.modal-overlay')) {
+      e.preventDefault();
+      closeModal(closeBtn.closest('.modal-overlay'));
+    }
+  });
 
-// Global Escape key listener to close modals
-window.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' && window.location.hash) {
-    closeModal();
-  }
-});
+  // 2. Escape key closes open modals
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      const hasOpenModal = document.querySelector('.modal-overlay.active, .modal-overlay:target, .modal-overlay[style*="display: flex"]');
+      if (hasOpenModal || window.location.hash) {
+        closeModal();
+      }
+    }
+  });
+
+  // 3. React to hash changes (e.g. clicking <a href="#some-modal">)
+  window.addEventListener('hashchange', () => {
+    const hash = window.location.hash ? window.location.hash.replace(/^#/, '') : '';
+    if (hash) {
+      const modal = document.getElementById(hash);
+      if (modal && modal.classList.contains('modal-overlay')) {
+        modal.classList.remove('modal-closed');
+        modal.classList.add('active');
+        modal.style.display = 'flex';
+        modal.style.opacity = '1';
+        modal.style.pointerEvents = 'auto';
+      }
+    }
+  });
+}
 
 /**
  * Sets a button in loading state with a spinner or text.
