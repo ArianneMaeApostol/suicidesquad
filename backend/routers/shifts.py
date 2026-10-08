@@ -98,19 +98,38 @@ async def close_shift(
     db: Database = Depends(get_db),
     current_user: dict = Depends(get_current_user),
 ):
+    shift = await db.fetch_one("SELECT * FROM shifts WHERE id = $1 AND closed_at IS NULL", body.shift_id)
+    if not shift:
+        raise HTTPException(status_code=400, detail="Shift not found or already closed")
+
+    opening_cash = float(shift.get("opening_cash") or 0.0)
+    cash_sales = await db.fetch_val(
+        """
+        SELECT COALESCE(SUM(total), 0) FROM sales
+        WHERE shift_id = $1 AND payment_method = 'cash' AND is_voided = FALSE
+        """,
+        body.shift_id
+    )
+    expected_cash = opening_cash + float(cash_sales or 0.0)
+    cash_variance = float(body.counted_cash) - expected_cash
+
     query = """
         UPDATE shifts
         SET closed_at = NOW(),
             closing_cash = $2,
-            notes = $3
+            expected_cash = $3,
+            cash_variance = $4,
+            notes = $5
         WHERE id = $1 AND closed_at IS NULL
         RETURNING *
     """
     closed = await db.fetch_one(
         query,
-        body.shift_id, float(body.counted_cash), body.notes
+        body.shift_id, float(body.counted_cash), expected_cash, cash_variance, body.notes
     )
     if not closed:
-        raise HTTPException(status_code=400, detail="Shift not found or already closed")
+        raise HTTPException(status_code=400, detail="Shift could not be closed")
 
-    return closed
+    res = dict(closed)
+    res["variance"] = cash_variance
+    return res

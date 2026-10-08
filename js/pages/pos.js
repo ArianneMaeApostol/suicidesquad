@@ -1,7 +1,8 @@
 /**
  * @file pages/pos.js
  * Controller for pos.html: Shift verification, dynamic product catalog, tier pricing,
- * in-memory shopping cart docket, customer search, and create_sale RPC transaction.
+ * real-time search, category filters, shopping cart docket, customer assignment,
+ * container tracking, custom item modal, held orders, and create_sale RPC transaction.
  */
 import {
   resolveBranchId,
@@ -28,8 +29,11 @@ let productsList = [];
 let selectedCustomer = null;
 let cart = []; // Array of { product: object, qty: number }
 let activeCategory = 'all';
+let searchQuery = '';
+let currentCashierProfile = null;
 
 export async function init({ profile }) {
+  currentCashierProfile = profile;
   activeBranchId = await resolveBranchId();
 
   // 1. Verify Active Shift
@@ -38,14 +42,26 @@ export async function init({ profile }) {
   // 2. Load Products Catalog
   await loadProducts();
 
-  // 3. Bind Customer Search
+  // 3. Bind Real-Time Product Search
+  setupProductSearch();
+
+  // 4. Bind Customer Search & Tier Pricing
   setupCustomerSearch();
 
-  // 4. Bind Payment & Cart Event Listeners
+  // 5. Bind Cart Actions & Checkout Listener
   setupCartActions();
 
-  // 5. Shift Management Modal Bindings
+  // 6. Custom Item Modal
+  setupCustomItemModal();
+
+  // 7. Hold / Resume Order Feature
+  setupHoldOrder();
+
+  // 8. Shift Management Modal Bindings
   setupShiftModal();
+
+  // 9. Initial Render of Cart Docket
+  renderCart();
 }
 
 /**
@@ -53,7 +69,6 @@ export async function init({ profile }) {
  */
 async function verifyShiftStatus() {
   const shiftBadge = document.querySelector('[data-shift="status"]') || document.querySelector('.topbar-right .badge-success');
-  const completeBtn = document.querySelector('[data-action="complete-sale"]') || document.querySelector('a[href="#complete-modal"]');
 
   if (!activeBranchId) return;
 
@@ -64,9 +79,14 @@ async function verifyShiftStatus() {
     if (shiftBadge) {
       shiftBadge.className = 'badge badge-danger';
       shiftBadge.innerHTML = '<span class="badge-dot"></span> Shift Closed — Open Shift Required';
+      shiftBadge.style.cursor = 'pointer';
+      shiftBadge.title = 'Click to Open Shift Register';
+      shiftBadge.onclick = () => {
+        ensureOpenShiftModalExists();
+        openModal('open-shift-modal');
+      };
     }
     showToast('Notice: You must open a shift with starting cash before processing sales.', 'warning', 5000);
-    // Open shift modal automatically
     ensureOpenShiftModalExists();
     openModal('open-shift-modal');
   } else {
@@ -74,11 +94,11 @@ async function verifyShiftStatus() {
       shiftBadge.className = 'badge badge-success';
       shiftBadge.innerHTML = `<span class="badge-dot"></span> Shift Active (Opened: ${formatPHP(currentShift.opening_cash || 0)})`;
       shiftBadge.style.cursor = 'pointer';
-      shiftBadge.title = 'Click to Close Shift';
-      shiftBadge.addEventListener('click', () => {
+      shiftBadge.title = 'Click to Reconcile & Close Shift';
+      shiftBadge.onclick = () => {
         ensureCloseShiftModalExists();
         openModal('close-shift-modal');
-      });
+      };
     }
   }
 }
@@ -101,10 +121,10 @@ function ensureOpenShiftModalExists() {
       <form id="open-shift-form">
         <div class="modal-body">
           <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px;">
-            Enter the starting petty cash drawer balance to begin recording sales for this counter shift.
+            Enter the starting petty cash drawer float balance to begin recording counter transactions.
           </p>
           <div class="form-group">
-            <label class="form-label" for="opening-cash-val">Starting Drawer Cash (₱) <span class="required">*</span></label>
+            <label class="form-label" for="opening-cash-val">Starting Drawer Float (₱) <span class="required">*</span></label>
             <div class="input-prefix-group">
               <span class="input-prefix">₱</span>
               <input type="number" id="opening-cash-val" class="form-control" value="1000" min="0" step="50" required autofocus>
@@ -126,7 +146,7 @@ function ensureOpenShiftModalExists() {
     const cashVal = document.getElementById('opening-cash-val').value;
     const submitBtn = modal.querySelector('button[type="submit"]');
 
-    setButtonLoading(submitBtn, true, 'Opening...');
+    setButtonLoading(submitBtn, true, 'Opening Register...');
     const { data: shiftId, error } = await rpcOpenShift(activeBranchId, cashVal);
     setButtonLoading(submitBtn, false);
 
@@ -135,7 +155,7 @@ function ensureOpenShiftModalExists() {
       return;
     }
 
-    showToast('Shift successfully opened!', 'success');
+    showToast('Register opened successfully!', 'success');
     closeModal();
     window.location.reload();
   });
@@ -165,8 +185,12 @@ function ensureCloseShiftModalExists() {
             <label class="form-label" for="counted-cash-val">Counted Physical Cash (₱) <span class="required">*</span></label>
             <div class="input-prefix-group">
               <span class="input-prefix">₱</span>
-              <input type="number" id="counted-cash-val" class="form-control" placeholder="0.00" min="0" required autofocus>
+              <input type="number" id="counted-cash-val" class="form-control" placeholder="0.00" min="0" step="1" required autofocus>
             </div>
+          </div>
+          <div class="form-group" style="margin-top: 12px;">
+            <label class="form-label" for="shift-notes">Shift Handover Notes (Optional)</label>
+            <textarea id="shift-notes" class="form-control" rows="2" placeholder="e.g. Minor coins shortage, handover to Shift B"></textarea>
           </div>
         </div>
         <div class="modal-footer">
@@ -187,10 +211,11 @@ function ensureCloseShiftModalExists() {
     if (!currentShift) return;
 
     const countedCash = document.getElementById('counted-cash-val').value;
+    const notes = document.getElementById('shift-notes')?.value.trim() || null;
     const submitBtn = modal.querySelector('button[type="submit"]');
 
-    setButtonLoading(submitBtn, true, 'Closing Shift...');
-    const { data: closedShift, error } = await rpcCloseShift(currentShift.id, countedCash);
+    setButtonLoading(submitBtn, true, 'Reconciling Shift...');
+    const { data: closedShift, error } = await rpcCloseShift(currentShift.id, countedCash, notes);
     setButtonLoading(submitBtn, false);
 
     if (error) {
@@ -198,9 +223,9 @@ function ensureCloseShiftModalExists() {
       return;
     }
 
-    const variance = closedShift?.variance || 0;
+    const variance = Number(closedShift?.variance) || 0;
     const varText = variance >= 0 ? `+${formatPHP(variance)} (Overage)` : `${formatPHP(variance)} (Shortage)`;
-    alert(`Shift closed successfully!\nCounted: ${formatPHP(countedCash)}\nVariance: ${varText}`);
+    alert(`Shift successfully reconciled & closed!\n\nCounted Cash: ${formatPHP(countedCash)}\nVariance: ${varText}`);
     closeModal();
     window.location.reload();
   });
@@ -217,11 +242,11 @@ async function loadProducts() {
   const grid = document.querySelector('[data-grid="products"]') || document.querySelector('.pos-product-grid');
   if (!grid) return;
 
-  grid.innerHTML = '<div style="padding: 24px; color: var(--text-muted);">Loading station products...</div>';
+  grid.innerHTML = '<div style="padding: 24px; color: var(--text-muted); grid-column: 1 / -1; text-align: center;">Loading station products...</div>';
 
   const { data: products, error } = await getProducts(activeBranchId);
   if (error || !products || products.length === 0) {
-    grid.innerHTML = '<div style="padding: 24px; color: var(--text-muted);">No products registered for this station branch.</div>';
+    grid.innerHTML = '<div style="padding: 24px; color: var(--text-muted); grid-column: 1 / -1; text-align: center;">No products registered for this station branch.</div>';
     return;
   }
 
@@ -231,15 +256,45 @@ async function loadProducts() {
 }
 
 /**
- * Renders the products grid cards based on active category and customer pricing.
+ * Renders the products grid cards based on active category, search query, and customer pricing.
  */
 function renderProductGrid() {
   const grid = document.querySelector('[data-grid="products"]') || document.querySelector('.pos-product-grid');
   if (!grid) return;
 
-  const filtered = activeCategory === 'all'
-    ? productsList
-    : productsList.filter((p) => p.category === activeCategory);
+  const filtered = productsList.filter((product) => {
+    const matchesCategory = activeCategory === 'all' || product.category === activeCategory;
+    const query = searchQuery.trim().toLowerCase();
+    const matchesSearch =
+      !query ||
+      (product.name && product.name.toLowerCase().includes(query)) ||
+      (product.description && product.description.toLowerCase().includes(query)) ||
+      (product.category && product.category.toLowerCase().includes(query));
+    return matchesCategory && matchesSearch;
+  });
+
+  if (filtered.length === 0) {
+    grid.innerHTML = `
+      <div style="grid-column: 1 / -1; padding: 36px 16px; text-align: center; color: var(--text-muted); font-size: 0.9rem;">
+        No products match "${escapeHTML(searchQuery || activeCategory)}".<br>
+        <button type="button" class="btn btn-outline btn-sm" style="margin-top: 10px;" id="btn-clear-filter">Show All Items</button>
+      </div>
+    `;
+    const clearFilterBtn = document.getElementById('btn-clear-filter');
+    if (clearFilterBtn) {
+      clearFilterBtn.onclick = () => {
+        searchQuery = '';
+        activeCategory = 'all';
+        const searchInput = document.querySelector('.pos-catalog input[type="search"]');
+        if (searchInput) searchInput.value = '';
+        document.querySelectorAll('.pos-cat-pill').forEach((p, idx) => {
+          p.classList.toggle('active', idx === 0);
+        });
+        renderProductGrid();
+      };
+    }
+    return;
+  }
 
   grid.innerHTML = filtered
     .map((product) => {
@@ -292,7 +347,23 @@ function getProductPriceForCustomer(product) {
   if (customPriceObj && customPriceObj.price !== null) {
     return Number(customPriceObj.price);
   }
-  return Number(product.price) || 0;
+  return Number(product.price) || 30.0;
+}
+
+/**
+ * Binds product search input with debounce.
+ */
+function setupProductSearch() {
+  const searchInput = document.querySelector('.pos-catalog input[type="search"]');
+  if (!searchInput) return;
+
+  searchInput.addEventListener(
+    'input',
+    debounce((e) => {
+      searchQuery = (e.target.value || '').trim();
+      renderProductGrid();
+    }, 150)
+  );
 }
 
 /**
@@ -320,10 +391,9 @@ function setupCategoryFilters() {
  * Binds customer selection and search input.
  */
 function setupCustomerSearch() {
-  const customerSelect = document.querySelector('select[name="customer"]') || document.querySelector('.pos-docket select');
+  const customerSelect = document.querySelector('select[name="customer"]') || document.getElementById('pos-customer-select') || document.querySelector('.pos-docket select');
   if (!customerSelect) return;
 
-  // Populate known customers
   getCustomers({ pageSize: 50 }).then(({ data: customers }) => {
     if (!customers) return;
     customerSelect.innerHTML = `
@@ -332,7 +402,7 @@ function setupCustomerSearch() {
         .map(
           (c) => `
         <option value="${escapeHTML(c.id)}" data-type="${escapeHTML(c.type || 'regular')}" data-balance="${c.balance || 0}" data-limit="${c.credit_limit || 1000}">
-          ${escapeHTML(c.full_name)} (${c.type?.toUpperCase() || 'REGULAR'}) — Bal: ${formatPHP(c.balance || 0)}
+          ${escapeHTML(c.full_name)} (${(c.type || 'regular').toUpperCase()}) — Bal: ${formatPHP(c.balance || 0)}
         </option>
       `
         )
@@ -349,22 +419,20 @@ function setupCustomerSearch() {
       selectedCustomer = {
         id: custId,
         full_name: opt.text.split('(')[0].trim(),
-        type: opt.dataset.type,
+        type: opt.dataset.type || 'regular',
         balance: Number(opt.dataset.balance) || 0,
         credit_limit: Number(opt.dataset.limit) || 1000
       };
 
-      // Check if near credit limit
       if (selectedCustomer.balance >= selectedCustomer.credit_limit) {
         showToast(
-          `Notice: ${selectedCustomer.full_name} has exceeded their credit limit of ${formatPHP(selectedCustomer.credit_limit)} (Current balance: ${formatPHP(selectedCustomer.balance)}).`,
+          `Notice: ${selectedCustomer.full_name} has reached credit limit of ${formatPHP(selectedCustomer.credit_limit)} (Current balance: ${formatPHP(selectedCustomer.balance)}).`,
           'warning',
           6000
         );
       }
     }
 
-    // Re-render product grid and cart to reflect custom tier pricing
     renderProductGrid();
     renderCart();
   });
@@ -420,28 +488,33 @@ function increaseItem(productId) {
  */
 function renderCart() {
   const cartContainer = document.querySelector('[data-cart="items"]') || document.querySelector('.pos-cart-items');
+  const countEl = document.querySelector('[data-cart="item-count"]');
   const subtotalEl = document.querySelector('[data-cart="subtotal"]') || document.querySelector('.pos-total-row span:last-child');
   const grandTotalEl = document.querySelector('[data-cart="grand-total"]') || document.querySelector('.pos-total-row.grand span:last-child');
-  const clearBtn = document.querySelector('.pos-docket-header a');
+  const clearBtn = document.querySelector('[data-action="clear-cart"]') || document.querySelector('.pos-docket-header a');
   const completeBtn = document.querySelector('[data-action="complete-sale"]') || document.querySelector('.pos-docket .btn-primary');
+  const discountCheckbox = document.getElementById('pos-discount-check') || document.querySelector('.pos-totals-box input[type="checkbox"]');
 
   if (!cartContainer) return;
 
   if (cart.length === 0) {
     cartContainer.innerHTML = '<div style="padding: 24px; text-align: center; color: var(--text-muted); font-size: 0.85rem;">Cart is empty. Select products from the catalog.</div>';
+    if (countEl) countEl.textContent = 'Subtotal (0 items)';
     if (subtotalEl) subtotalEl.textContent = '₱0.00';
     if (grandTotalEl) grandTotalEl.textContent = '₱0.00';
-    if (completeBtn) completeBtn.innerHTML = '<span>Complete Sale (₱0.00)</span>';
+    if (completeBtn) completeBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg><span>Complete Sale (₱0.00)</span>';
     return;
   }
 
-  let totalAmount = 0;
+  let totalItemsCount = 0;
+  let rawSubtotal = 0;
 
   cartContainer.innerHTML = cart
     .map((item) => {
       const unitPrice = getProductPriceForCustomer(item.product);
       const rowTotal = unitPrice * item.qty;
-      totalAmount += rowTotal;
+      totalItemsCount += item.qty;
+      rawSubtotal += rowTotal;
 
       return `
         <div class="cart-item-row" data-id="${escapeHTML(item.product.id)}">
@@ -460,17 +533,17 @@ function renderCart() {
     })
     .join('');
 
-  // Check for Senior / PWD discount checkbox
-  const discountCheckbox = document.querySelector('.pos-totals-box input[type="checkbox"]');
+  let grandTotal = rawSubtotal;
   if (discountCheckbox && discountCheckbox.checked) {
-    totalAmount = Math.max(0, totalAmount * 0.8);
+    grandTotal = Math.max(0, rawSubtotal * 0.8);
   }
 
-  if (subtotalEl) subtotalEl.textContent = formatPHP(totalAmount);
-  if (grandTotalEl) grandTotalEl.textContent = formatPHP(totalAmount);
-  if (completeBtn) completeBtn.innerHTML = `<span>Complete Sale (${formatPHP(totalAmount)})</span>`;
+  if (countEl) countEl.textContent = `Subtotal (${totalItemsCount} ${totalItemsCount === 1 ? 'item' : 'items'})`;
+  if (subtotalEl) subtotalEl.textContent = formatPHP(rawSubtotal);
+  if (grandTotalEl) grandTotalEl.textContent = formatPHP(grandTotal);
+  if (completeBtn) completeBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg><span>Complete Sale (${formatPHP(grandTotal)})</span>`;
 
-  // Delegate quantity controls
+  // Quantity controls
   cartContainer.querySelectorAll('.cart-item-row').forEach((row) => {
     const pId = row.dataset.id;
     row.querySelector('[data-action="minus"]').addEventListener('click', () => decreaseItem(pId));
@@ -491,8 +564,8 @@ function renderCart() {
  * Handles sale submission, validation, RPC call, and receipt rendering.
  */
 function setupCartActions() {
-  const completeActionTrigger = document.querySelector('a[href="#complete-modal"]') || document.querySelector('.pos-docket .btn-primary');
-  const discountCheckbox = document.querySelector('.pos-totals-box input[type="checkbox"]');
+  const completeActionTrigger = document.querySelector('[data-action="complete-sale"]') || document.querySelector('a[href="#complete-modal"]');
+  const discountCheckbox = document.getElementById('pos-discount-check') || document.querySelector('.pos-totals-box input[type="checkbox"]');
 
   if (discountCheckbox) {
     discountCheckbox.addEventListener('change', renderCart);
@@ -507,34 +580,45 @@ function setupCartActions() {
 
       if (!currentShift) {
         showToast('Shift is closed. You must open a shift before completing sales.', 'danger');
+        ensureOpenShiftModalExists();
         openModal('open-shift-modal');
         return;
       }
 
       if (cart.length === 0) {
-        showToast('Cart is empty. Please add items to checkout.', 'warning');
+        showToast('Cart is empty. Please select products to complete a sale.', 'warning');
         return;
       }
 
-      // Read payment method
       const selectedPay = document.querySelector('input[name="pay_method"]:checked')?.value || 'cash';
 
-      // Check credit rules: must have customer
       if (selectedPay === 'credit' && !selectedCustomer) {
         showToast('Credit (Utang) sales require selecting an assigned customer account.', 'danger');
+        const customerSelect = document.getElementById('pos-customer-select') || document.querySelector('select[name="customer"]');
+        if (customerSelect) {
+          customerSelect.focus();
+          customerSelect.style.borderColor = 'var(--danger)';
+          setTimeout(() => (customerSelect.style.borderColor = ''), 2500);
+        }
         return;
       }
 
-      // Calculate total
-      let grandTotal = cart.reduce((sum, i) => sum + getProductPriceForCustomer(i.product) * i.qty, 0);
-      if (discountCheckbox?.checked) grandTotal *= 0.8;
+      const rawSubtotal = cart.reduce((sum, i) => sum + getProductPriceForCustomer(i.product) * i.qty, 0);
+      let grandTotal = rawSubtotal;
+      let discountAmount = 0.0;
+      if (discountCheckbox?.checked) {
+        discountAmount = rawSubtotal * 0.2;
+        grandTotal = Math.max(0, rawSubtotal - discountAmount);
+      }
 
       const containersLent = Number(document.getElementById('pos-lent-qty')?.value) || 0;
       const containersBack = Number(document.getElementById('pos-back-qty')?.value) || 0;
 
       const saleItems = cart.map((i) => ({
         product_id: i.product.id,
-        qty: i.qty
+        qty: i.qty,
+        unit_price: getProductPriceForCustomer(i.product),
+        subtotal: getProductPriceForCustomer(i.product) * i.qty
       }));
 
       const amountPaid = selectedPay === 'credit' ? 0 : grandTotal;
@@ -549,6 +633,7 @@ function setupCartActions() {
           items: saleItems,
           paymentMethod: selectedPay,
           amountPaid,
+          discount: discountAmount,
           containersLent,
           containersBack
         });
@@ -560,18 +645,39 @@ function setupCartActions() {
           return;
         }
 
-        // Render Slip Modal
-        populateSlipReceiptModal(saleId, grandTotal, selectedPay, containersLent, containersBack);
+        // Keep cart snapshot for the receipt modal
+        const purchasedItems = [...cart];
+
+        // Render Slip Modal with real purchased items
+        populateSlipReceiptModal(saleId, grandTotal, selectedPay, containersLent, containersBack, purchasedItems);
         openModal('complete-modal');
 
-        // Reset cart
+        // Reset cart docket & controls
         cart = [];
+        const lentInput = document.getElementById('pos-lent-qty');
+        const backInput = document.getElementById('pos-back-qty');
+        if (lentInput) lentInput.value = '0';
+        if (backInput) backInput.value = '0';
+        if (discountCheckbox) discountCheckbox.checked = false;
+
         renderProductGrid();
         renderCart();
+
+        // Refresh shift badge details
+        verifyShiftStatus();
       } catch (err) {
         setButtonLoading(completeActionTrigger, false);
         showToast('Offline or network timeout. Please retry.', 'danger');
       }
+    });
+  }
+
+  // Done & Next Order modal button
+  const doneOrderBtn = document.querySelector('[data-action="done-order"]');
+  if (doneOrderBtn) {
+    doneOrderBtn.addEventListener('click', () => {
+      closeModal();
+      showToast('Ready for next transaction.', 'success');
     });
   }
 }
@@ -603,14 +709,137 @@ function injectContainerControls() {
 }
 
 /**
+ * Handles adding Custom / Ad-Hoc Items to the docket.
+ */
+function setupCustomItemModal() {
+  const form = document.getElementById('custom-item-form');
+  if (!form) return;
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const nameInput = document.getElementById('custom-item-name');
+    const priceInput = document.getElementById('custom-item-price');
+    const qtyInput = document.getElementById('custom-item-qty');
+
+    const name = nameInput?.value.trim() || 'Custom Item';
+    const price = parseFloat(priceInput?.value) || 0;
+    const qty = parseInt(qtyInput?.value, 10) || 1;
+
+    if (price < 0 || qty < 1) {
+      showToast('Please enter a valid price and quantity.', 'warning');
+      return;
+    }
+
+    const customProduct = {
+      id: `custom-${Date.now()}`,
+      name: name,
+      description: 'Custom Station Item',
+      price: price,
+      category: 'custom',
+      product_prices: []
+    };
+
+    const existing = cart.find((i) => i.product.name.toLowerCase() === name.toLowerCase() && i.product.price === price);
+    if (existing) {
+      existing.qty += qty;
+    } else {
+      cart.push({ product: customProduct, qty });
+    }
+
+    form.reset();
+    closeModal();
+    renderProductGrid();
+    renderCart();
+    showToast(`Added "${name}" to docket.`, 'success');
+  });
+}
+
+/**
+ * Enables parking and resuming held orders in localStorage.
+ */
+function setupHoldOrder() {
+  const holdBtn = document.querySelector('[data-action="hold-order"]');
+  const resumeBtn = document.querySelector('[data-action="resume-order"]');
+
+  function updateResumeBtn() {
+    const held = localStorage.getItem('wrsms_held_cart');
+    if (resumeBtn) {
+      resumeBtn.style.display = held ? 'inline-flex' : 'none';
+      if (held) {
+        try {
+          const parsed = JSON.parse(held);
+          resumeBtn.textContent = `Resume Held (${parsed.length})`;
+        } catch (_) {
+          resumeBtn.textContent = 'Resume Held';
+        }
+      }
+    }
+  }
+
+  updateResumeBtn();
+
+  if (holdBtn) {
+    holdBtn.addEventListener('click', () => {
+      if (cart.length === 0) {
+        showToast('Cart is empty. Nothing to hold.', 'warning');
+        return;
+      }
+      localStorage.setItem('wrsms_held_cart', JSON.stringify(cart));
+      cart = [];
+      renderProductGrid();
+      renderCart();
+      updateResumeBtn();
+      showToast('Order held successfully.', 'info');
+    });
+  }
+
+  if (resumeBtn) {
+    resumeBtn.addEventListener('click', () => {
+      const held = localStorage.getItem('wrsms_held_cart');
+      if (!held) return;
+      try {
+        cart = JSON.parse(held);
+        localStorage.removeItem('wrsms_held_cart');
+        renderProductGrid();
+        renderCart();
+        updateResumeBtn();
+        showToast('Held order restored to docket.', 'success');
+      } catch (err) {
+        showToast('Failed to restore held order.', 'danger');
+      }
+    });
+  }
+}
+
+/**
  * Fills details in the #complete-modal receipt for printing.
  */
-function populateSlipReceiptModal(saleId, total, paymentMethod, lent, back) {
+function populateSlipReceiptModal(saleId, total, paymentMethod, lent, back, items = []) {
   const modal = document.getElementById('complete-modal');
   if (!modal) return;
 
   const slipShort = saleId ? `#SLP-${saleId.slice(0, 6).toUpperCase()}` : '#SLP-1049';
   const custName = selectedCustomer ? selectedCustomer.full_name : 'Walk-in Customer';
+  const cashierName = currentCashierProfile ? currentCashierProfile.full_name : 'Station Cashier';
+  const now = new Date();
+  const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  const dateStr = now.toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric' });
+
+  const itemsRows =
+    items.length > 0
+      ? items
+          .map((i) => {
+            const unitPrice = getProductPriceForCustomer(i.product);
+            const rowTotal = unitPrice * i.qty;
+            return `
+              <div style="padding: 3px 0; display: flex; justify-content: space-between;">
+                <span>${i.qty}x ${escapeHTML(i.product.name)}</span>
+                <span>${formatPHP(rowTotal)}</span>
+              </div>
+            `;
+          })
+          .join('')
+      : `<div style="padding: 3px 0;">Refill Service ................ ${formatPHP(total)}</div>`;
 
   const bodyEl = modal.querySelector('.modal-body');
   if (bodyEl) {
@@ -618,18 +847,28 @@ function populateSlipReceiptModal(saleId, total, paymentMethod, lent, back) {
       <div style="text-align: center; margin-bottom: var(--space-4);">
         <div style="font-size: 1.8rem; font-weight: 800; color: var(--primary);">${formatPHP(total)}</div>
         <div style="font-size: 0.85rem; color: var(--text-muted);">Payment: <strong>${paymentMethod.toUpperCase()}</strong></div>
-        <div style="font-size: 0.78rem; color: var(--text-muted);">${slipShort} • Customer: ${escapeHTML(custName)}</div>
+        <div style="font-size: 0.78rem; color: var(--text-muted);">${slipShort} • Cashier: ${escapeHTML(cashierName)}</div>
       </div>
 
       <div class="printable-receipt" style="background-color: var(--bg-surface-alt); border-radius: var(--radius-md); padding: var(--space-4); font-family: monospace; font-size: 0.82rem;">
         <div style="text-align: center; font-weight: bold;">AQUAFLOW WATER REFILLING</div>
         <div style="text-align: center; font-size: 0.75rem; margin-bottom: 8px;">DOH Permit #0941 • Official Receipt Slip</div>
-        <div style="border-top: 1px dashed var(--border-color); padding: 4px 0;">Slip ID: ${slipShort}</div>
-        <div style="padding: 2px 0;">Customer: ${escapeHTML(custName)}</div>
-        <div style="padding: 2px 0;">Containers Lent: ${lent} | Returned: ${back}</div>
-        <div style="border-top: 1px dashed var(--border-color); margin-top: 4px; padding-top: 4px; font-weight: bold; display: flex; justify-content: space-between;">
+        <div style="border-top: 1px dashed var(--border-color); padding: 4px 0; display: flex; justify-content: space-between;">
+          <span>Slip: ${slipShort}</span>
+          <span>${dateStr} ${timeStr}</span>
+        </div>
+        <div style="padding: 2px 0;">Customer: <strong>${escapeHTML(custName)}</strong></div>
+        <div style="padding: 2px 0;">Cashier: ${escapeHTML(cashierName)}</div>
+        ${
+          lent > 0 || back > 0
+            ? `<div style="padding: 2px 0; color: var(--primary);">Containers: +${lent} Lent / -${back} Returned</div>`
+            : ''
+        }
+        <div style="border-top: 1px dashed var(--border-color); margin: 6px 0 4px 0;"></div>
+        ${itemsRows}
+        <div style="border-top: 1px dashed var(--border-color); margin-top: 6px; padding-top: 6px; font-weight: bold; display: flex; justify-content: space-between; font-size: 0.9rem;">
           <span>TOTAL PAID:</span>
-          <span>${formatPHP(total)}</span>
+          <span style="color: var(--primary);">${formatPHP(total)}</span>
         </div>
       </div>
     `;

@@ -59,10 +59,13 @@ async def create_sale(
     # 2. Customer tier check
     customer = None
     customer_tier = "walk_in"
-    if body.customer_id:
-        customer = await db.fetch_one("SELECT * FROM customers WHERE id = $1", body.customer_id)
+    cid = body.customer_id.strip() if (body.customer_id and str(body.customer_id).strip()) else None
+    if cid:
+        customer = await db.fetch_one("SELECT * FROM customers WHERE id = $1", cid)
         if customer:
             customer_tier = customer.get("type", "walk_in")
+        else:
+            cid = None
 
     # 3. Resolve items and calculate subtotal
     line_items = []
@@ -70,21 +73,25 @@ async def create_sale(
 
     for item in body.items:
         prod = await db.fetch_one("SELECT * FROM products WHERE id = $1", item.product_id)
-        prod_name = prod["name"] if prod else "Refill Item"
+        prod_name = prod["name"] if prod else "Custom Station Item"
+        prod_id = prod["id"] if prod else None
 
         unit_price = item.unit_price
         if unit_price is None or unit_price == 0:
-            price_row = await db.fetch_one(
-                "SELECT price FROM product_prices WHERE product_id = $1 AND customer_type = $2",
-                item.product_id, customer_tier
-            )
-            unit_price = float(price_row["price"]) if price_row else 30.0
+            if prod:
+                price_row = await db.fetch_one(
+                    "SELECT price FROM product_prices WHERE product_id = $1 AND customer_type = $2",
+                    prod["id"], customer_tier
+                )
+                unit_price = float(price_row["price"]) if price_row else 30.0
+            else:
+                unit_price = 30.0
 
         item_subtotal = item.subtotal if item.subtotal is not None else (unit_price * item.qty)
         calc_subtotal += item_subtotal
 
         line_items.append({
-            "product_id": item.product_id,
+            "product_id": prod_id,
             "product_name": prod_name,
             "qty": item.qty,
             "unit_price": float(unit_price),
@@ -113,7 +120,7 @@ async def create_sale(
     """
     sale_id = await db.fetch_val(
         sale_query,
-        sale_number, bid, shift_id, body.customer_id, str(current_user["id"]),
+        sale_number, bid, shift_id, cid, str(current_user["id"]),
         body.sale_type, body.payment_method, calc_subtotal, body.discount,
         total_amount, amount_paid, change_amount, body.containers_lent, body.containers_back
     )
@@ -133,12 +140,12 @@ async def create_sale(
         )
 
     # 6. Customer Account and Container Ledger Updates
-    if body.customer_id:
+    if cid:
         # If paid with credit (utang), increase customer debt balance
         if body.payment_method == "credit":
             await db.execute(
                 "UPDATE customers SET balance = balance + $2, updated_at = NOW() WHERE id = $1",
-                body.customer_id, total_amount
+                cid, total_amount
             )
 
         # Update container balance if lent or returned
@@ -146,20 +153,20 @@ async def create_sale(
         if net_containers != 0:
             await db.execute(
                 "UPDATE customers SET containers_out = GREATEST(containers_out + $2, 0), updated_at = NOW() WHERE id = $1",
-                body.customer_id, net_containers
+                cid, net_containers
             )
-            curr_cust = await db.fetch_one("SELECT containers_out FROM customers WHERE id = $1", body.customer_id)
+            curr_cust = await db.fetch_one("SELECT containers_out FROM customers WHERE id = $1", cid)
             new_bal = curr_cust["containers_out"] if curr_cust else 0
             await db.execute(
                 """
                 INSERT INTO container_ledger (customer_id, sale_id, container_type, quantity_change, balance_after, notes)
                 VALUES ($1, $2, 'slim', $3, $4, $5)
                 """,
-                body.customer_id, sale_id, net_containers, new_bal, f"Sale transaction {sale_number}"
+                cid, sale_id, net_containers, new_bal, f"Sale transaction {sale_number}"
             )
 
     # 7. Auto-create Delivery Order if sale_type is delivery
-    if body.sale_type == "delivery" and body.customer_id:
+    if body.sale_type == "delivery" and cid:
         total_gallons = sum(li["qty"] for li in line_items)
         cust_addr = customer.get("address", "") if customer else ""
         cust_brgy = customer.get("barangay", "") if customer else ""
@@ -171,7 +178,7 @@ async def create_sale(
             )
             VALUES ($1, $2, $3, 'pending', $4, $5, $6, $7, $8, $9)
             """,
-            bid, body.customer_id, sale_id, cust_addr, cust_brgy,
+            bid, cid, sale_id, cust_addr, cust_brgy,
             total_gallons, total_amount, body.payment_method, (body.payment_method != "credit")
         )
 
