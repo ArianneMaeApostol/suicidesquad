@@ -1,0 +1,53 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: wrsms_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: wrsms_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d wrsms_db"]
+      interval: 3s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: wrsms_backend
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://postgres:password@postgres:5432/wrsms_db
+      JWT_SECRET: aquaflow-super-secret-jwt-key-2026-production-ready
+      JWT_EXPIRY_HOURS: 8
+      ALLOWED_ORIGINS: "*"
+      UPLOADS_DIR: ./uploads
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend/uploads:/app/uploads
+
+  frontend:
+    image: nginx:alpine
+    container_name: wrsms_frontend
+    restart: unless-stopped
+    ports:
+      - "5500:80"
+    volumes:
+      - ./:/usr/share/nginx/html:ro
+      - ./docker/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - backend
+
+volumes:
+  pgdata:

@@ -24,7 +24,16 @@ def hash_pw(password: str) -> str:
 
 async def seed():
     print(f"Connecting to PostgreSQL at {DATABASE_URL}...")
-    conn = await asyncpg.connect(DATABASE_URL)
+    conn = None
+    for attempt in range(1, 11):
+        try:
+            conn = await asyncpg.connect(DATABASE_URL)
+            break
+        except Exception as e:
+            if attempt == 10:
+                raise
+            print(f"Database not ready yet (attempt {attempt}/10: {e}). Retrying in 2s...")
+            await asyncio.sleep(2)
 
     # 1. Ensure Schema
     schema_path = os.path.join(os.path.dirname(__file__), "schema.sql")
