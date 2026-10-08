@@ -17,12 +17,14 @@ router = APIRouter(prefix="/api/sales", tags=["sales"])
 
 
 class SaleItemIn(BaseModel):
-    product_id: str
+    product_id: Optional[str] = None
+    product_name: Optional[str] = None
     qty: int
     unit_price: Optional[float] = None
     subtotal: Optional[float] = None
     gallons_lent: Optional[int] = 0
     gallons_returned: Optional[int] = 0
+
 
 
 class CreateSaleIn(BaseModel):
@@ -73,9 +75,10 @@ async def create_sale(
     calc_subtotal = 0.0
 
     for item in body.items:
-        prod = await db.fetch_one("SELECT * FROM products WHERE id = $1", item.product_id)
-        prod_name = prod["name"] if prod else "Custom Station Item"
+        prod = await db.fetch_one("SELECT * FROM products WHERE id = $1", item.product_id) if item.product_id and not str(item.product_id).startswith("custom-") else None
+        prod_name = item.product_name or (prod["name"] if prod else "Custom Station Item")
         prod_id = prod["id"] if prod else None
+
 
         unit_price = item.unit_price
         if unit_price is None or unit_price == 0:

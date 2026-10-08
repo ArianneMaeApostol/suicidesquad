@@ -352,13 +352,18 @@ function renderProductGrid() {
  * @returns {number}
  */
 function getProductPriceForCustomer(product) {
+  if (!product) return 30.0;
   const tier = selectedCustomer?.type || 'walk_in';
   const customPriceObj = (product.product_prices || []).find((pp) => pp.customer_type === tier);
-  if (customPriceObj && customPriceObj.price !== null) {
+  if (customPriceObj && customPriceObj.price !== null && customPriceObj.price !== undefined) {
     return Number(customPriceObj.price);
   }
-  return Number(product.price) || 30.0;
+  if (product.price !== undefined && product.price !== null) {
+    return Number(product.price);
+  }
+  return 30.0;
 }
+
 
 /**
  * Binds product search input with debounce.
@@ -661,10 +666,12 @@ function setupCartActions() {
 
       const saleItems = cart.map((i) => ({
         product_id: i.product.id,
+        product_name: i.product.name,
         qty: i.qty,
         unit_price: getProductPriceForCustomer(i.product),
         subtotal: getProductPriceForCustomer(i.product) * i.qty
       }));
+
 
       setButtonLoading(completeActionTrigger, true, 'Processing Sale...');
 
@@ -718,9 +725,7 @@ function setupCartActions() {
       }
     });
   }
-      }
-    });
-  }
+
 
   // Done & Next Order modal button
   const doneOrderBtn = document.querySelector('[data-action="done-order"]');

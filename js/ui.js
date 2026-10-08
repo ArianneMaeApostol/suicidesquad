@@ -152,13 +152,15 @@ export function openModal(modalId) {
  */
 export function closeModal() {
   if (window.location.hash) {
-    history.pushState('', document.title, window.location.pathname + window.location.search);
+    window.location.hash = '#_';
+    history.replaceState('', document.title, window.location.pathname + window.location.search);
   }
   if (previouslyFocusedElement && typeof previouslyFocusedElement.focus === 'function') {
     previouslyFocusedElement.focus();
     previouslyFocusedElement = null;
   }
 }
+
 
 // Global Escape key listener to close modals
 window.addEventListener('keydown', (e) => {
