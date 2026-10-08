@@ -10,11 +10,13 @@ import {
   rpcOpenShift,
   rpcCloseShift,
   getProducts,
+  createProduct,
   getCustomers,
   rpcCreateSale,
   getRecentSales,
   rpcVoidSale
 } from '../api.js';
+
 import {
   formatPHP,
   formatDate,
@@ -246,7 +248,61 @@ function setupShiftModal() {
 }
 
 /**
- * Loads products from API and renders the catalog grid.
+ * Updates the category pills counts and ensures the 'Custom Items' tab is displayed if custom items exist.
+ */
+function updateCategoryPills() {
+  const container = document.querySelector('.pos-categories');
+  if (!container) return;
+
+  const allPill = container.querySelector('.pos-cat-pill:first-child');
+  if (allPill) {
+    allPill.textContent = `All Items (${productsList.length})`;
+  }
+
+  const customItems = productsList.filter((p) => p.category === 'custom' || String(p.id).startsWith('custom-'));
+  let customPill = container.querySelector('[data-cat="custom"]');
+
+  if (customItems.length > 0) {
+    if (!customPill) {
+      customPill = document.createElement('button');
+      customPill.type = 'button';
+      customPill.className = 'pos-cat-pill';
+      customPill.dataset.cat = 'custom';
+      container.appendChild(customPill);
+    }
+    customPill.textContent = `Custom Items (${customItems.length})`;
+    if (activeCategory === 'custom') {
+      customPill.classList.add('active');
+    }
+  } else if (customPill) {
+    customPill.remove();
+  }
+
+  setupCategoryFilters();
+}
+
+/**
+ * Sets active category tab programmatically.
+ */
+function setActiveCategory(catName) {
+  activeCategory = catName;
+  const catPills = document.querySelectorAll('.pos-cat-pill');
+  catPills.forEach((p) => {
+    const text = p.textContent.toLowerCase();
+    if (catName === 'all' && (text.includes('all') || !p.dataset.cat)) {
+      p.classList.add('active');
+    } else if (catName === 'custom' && (text.includes('custom') || p.dataset.cat === 'custom')) {
+      p.classList.add('active');
+    } else if (catName !== 'all' && text.includes(catName)) {
+      p.classList.add('active');
+    } else {
+      p.classList.remove('active');
+    }
+  });
+}
+
+/**
+ * Loads products from API and local storage, then renders the catalog grid.
  */
 async function loadProducts() {
   const grid = document.querySelector('[data-grid="products"]') || document.querySelector('.pos-product-grid');
@@ -254,15 +310,28 @@ async function loadProducts() {
 
   grid.innerHTML = '<div style="padding: 24px; color: var(--text-muted); grid-column: 1 / -1; text-align: center;">Loading station products...</div>';
 
-  const { data: products, error } = await getProducts(activeBranchId);
-  if (error || !products || products.length === 0) {
+  const { data: products } = await getProducts(activeBranchId);
+  const apiProducts = products || [];
+
+  // Merge with locally stored custom items to ensure full persistence across reloads/offline
+  let localCustom = [];
+  try {
+    localCustom = JSON.parse(localStorage.getItem('wrsms_custom_products') || '[]');
+  } catch (_) {}
+
+  const dbIds = new Set(apiProducts.map((p) => p.id));
+  const dbNames = new Set(apiProducts.map((p) => (p.name || '').toLowerCase()));
+  const unsynced = localCustom.filter((p) => !dbIds.has(p.id) && !dbNames.has((p.name || '').toLowerCase()));
+
+  productsList = [...unsynced, ...apiProducts];
+
+  if (productsList.length === 0) {
     grid.innerHTML = '<div style="padding: 24px; color: var(--text-muted); grid-column: 1 / -1; text-align: center;">No products registered for this station branch.</div>';
     return;
   }
 
-  productsList = products;
+  updateCategoryPills();
   renderProductGrid();
-  setupCategoryFilters();
 }
 
 /**
@@ -273,7 +342,11 @@ function renderProductGrid() {
   if (!grid) return;
 
   const filtered = productsList.filter((product) => {
-    const matchesCategory = activeCategory === 'all' || product.category === activeCategory;
+    const isCustom = product.category === 'custom' || String(product.id).startsWith('custom-');
+    const matchesCategory =
+      activeCategory === 'all' ||
+      product.category === activeCategory ||
+      (activeCategory === 'custom' && isCustom);
     const query = searchQuery.trim().toLowerCase();
     const matchesSearch =
       !query ||
@@ -294,12 +367,9 @@ function renderProductGrid() {
     if (clearFilterBtn) {
       clearFilterBtn.onclick = () => {
         searchQuery = '';
-        activeCategory = 'all';
+        setActiveCategory('all');
         const searchInput = document.querySelector('.pos-catalog input[type="search"]');
         if (searchInput) searchInput.value = '';
-        document.querySelectorAll('.pos-cat-pill').forEach((p, idx) => {
-          p.classList.toggle('active', idx === 0);
-        });
         renderProductGrid();
       };
     }
@@ -309,18 +379,33 @@ function renderProductGrid() {
   grid.innerHTML = filtered
     .map((product) => {
       const price = getProductPriceForCustomer(product);
-      const inCartItem = cart.find((i) => i.product.id === product.id);
+      const inCartItem = cart.find(
+        (i) => i.product.id === product.id ||
+               ((product.category === 'custom' || String(product.id).startsWith('custom-')) &&
+                i.product.name.toLowerCase() === (product.name || '').toLowerCase())
+      );
       const isSelected = Boolean(inCartItem);
+      const isCustom = product.category === 'custom' || String(product.id).startsWith('custom-');
 
       return `
         <div class="pos-product-card" data-product-id="${escapeHTML(product.id)}" style="${isSelected ? 'border-color: var(--primary);' : ''}">
           <div class="pos-product-icon">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
-            </svg>
+            ${
+              isCustom
+                ? `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                     <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+                     <line x1="7" y1="7" x2="7.01" y2="7"></line>
+                   </svg>`
+                : `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                     <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
+                   </svg>`
+            }
           </div>
-          <div class="pos-product-name">${escapeHTML(product.name)}</div>
-          <div class="pos-product-meta">${escapeHTML(product.description || 'Station Item')}</div>
+          <div class="pos-product-name">
+            ${escapeHTML(product.name)}
+            ${isCustom ? '<span class="badge badge-warning" style="font-size: 0.65rem; margin-left: 6px; vertical-align: middle;">Custom</span>' : ''}
+          </div>
+          <div class="pos-product-meta">${escapeHTML(product.description || (isCustom ? 'Custom Station Item' : 'Station Item'))}</div>
           <div class="pos-product-footer">
             <div class="pos-product-price">${formatPHP(price)}</div>
             ${
@@ -387,14 +472,17 @@ function setupProductSearch() {
 function setupCategoryFilters() {
   const catPills = document.querySelectorAll('.pos-cat-pill');
   catPills.forEach((pill) => {
+    if (pill.dataset.bound === 'true') return;
+    pill.dataset.bound = 'true';
     pill.addEventListener('click', () => {
-      catPills.forEach((p) => p.classList.remove('active'));
+      document.querySelectorAll('.pos-cat-pill').forEach((p) => p.classList.remove('active'));
       pill.classList.add('active');
       const text = pill.textContent.toLowerCase();
       if (text.includes('refill')) activeCategory = 'refill';
       else if (text.includes('container') || text.includes('bottle')) activeCategory = 'container';
       else if (text.includes('cap') || text.includes('seal')) activeCategory = 'seal';
       else if (text.includes('accessori')) activeCategory = 'accessory';
+      else if (text.includes('custom') || pill.dataset.cat === 'custom') activeCategory = 'custom';
       else activeCategory = 'all';
 
       renderProductGrid();
@@ -764,17 +852,29 @@ function injectContainerControls() {
 }
 
 /**
- * Handles adding Custom / Ad-Hoc Items to the docket.
+ * Handles adding Custom / Ad-Hoc Items to the catalog and docket.
  */
 function setupCustomItemModal() {
+  const modal = document.getElementById('quick-custom-sale');
   const form = document.getElementById('custom-item-form');
   if (!form) return;
 
-  form.addEventListener('submit', (e) => {
+  // Handle modal cancel / close buttons
+  if (modal) {
+    modal.querySelectorAll('.modal-close-btn, a[href="#"]').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        closeModal();
+      });
+    });
+  }
+
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const nameInput = document.getElementById('custom-item-name');
     const priceInput = document.getElementById('custom-item-price');
     const qtyInput = document.getElementById('custom-item-qty');
+    const submitBtn = form.querySelector('button[type="submit"]');
 
     const name = nameInput?.value.trim() || 'Custom Item';
     const price = parseFloat(priceInput?.value) || 0;
@@ -785,27 +885,85 @@ function setupCustomItemModal() {
       return;
     }
 
-    const customProduct = {
-      id: `custom-${Date.now()}`,
-      name: name,
-      description: 'Custom Station Item',
-      price: price,
-      category: 'custom',
-      product_prices: []
-    };
+    setButtonLoading(submitBtn, true, 'Adding Item...');
 
-    const existing = cart.find((i) => i.product.name.toLowerCase() === name.toLowerCase() && i.product.price === price);
+    let newProduct = null;
+    try {
+      const { data: created, error } = await createProduct({
+        name,
+        unit: 'pcs',
+        category: 'custom',
+        description: 'Custom Station Item',
+        price,
+        branchId: activeBranchId
+      });
+      if (!error && created) {
+        newProduct = created;
+      }
+    } catch (err) {
+      console.warn('Backend product creation skipped/failed:', err);
+    }
+
+    if (!newProduct) {
+      newProduct = {
+        id: `custom-${Date.now()}`,
+        name,
+        unit: 'pcs',
+        category: 'custom',
+        description: 'Custom Station Item',
+        price,
+        product_prices: [
+          { customer_type: 'walk_in', price },
+          { customer_type: 'regular', price },
+          { customer_type: 'reseller', price },
+          { customer_type: 'commercial', price }
+        ]
+      };
+    }
+
+    // 1. Save to localStorage for persistence across reloads
+    try {
+      const stored = JSON.parse(localStorage.getItem('wrsms_custom_products') || '[]');
+      const filtered = stored.filter(
+        (p) => p.id !== newProduct.id && (p.name || '').toLowerCase() !== newProduct.name.toLowerCase()
+      );
+      filtered.unshift(newProduct);
+      localStorage.setItem('wrsms_custom_products', JSON.stringify(filtered));
+    } catch (_) {}
+
+    // 2. Prepend to productsList so it immediately appears in the Item List catalog
+    productsList = productsList.filter(
+      (p) => p.id !== newProduct.id && (p.name || '').toLowerCase() !== newProduct.name.toLowerCase()
+    );
+    productsList.unshift(newProduct);
+
+    // 3. Add to shopping cart docket
+    const existing = cart.find(
+      (i) => i.product.id === newProduct.id ||
+             (i.product.name.toLowerCase() === newProduct.name.toLowerCase() && getProductPriceForCustomer(i.product) === price)
+    );
     if (existing) {
       existing.qty += qty;
     } else {
-      cart.push({ product: customProduct, qty });
+      cart.push({ product: newProduct, qty });
     }
 
+    setButtonLoading(submitBtn, false);
     form.reset();
     closeModal();
+
+    // 4. Reset search query & activate 'all' category tab
+    searchQuery = '';
+    const searchInput = document.querySelector('.pos-catalog input[type="search"]');
+    if (searchInput) searchInput.value = '';
+    setActiveCategory('all');
+
+    // 5. Update catalog pills and re-render both Item list and Cart
+    updateCategoryPills();
     renderProductGrid();
     renderCart();
-    showToast(`Added "${name}" to docket.`, 'success');
+
+    showToast(`Added "${name}" (${qty}x @ ${formatPHP(price)}) to Item List & Order Docket.`, 'success');
   });
 }
 

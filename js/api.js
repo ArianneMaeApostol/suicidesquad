@@ -244,6 +244,24 @@ export async function getProducts(branchId) {
 }
 
 /**
+ * Creates a new station product.
+ */
+export async function createProduct({ name, unit = 'pcs', category = 'custom', description = 'Custom Station Item', price, branchId }) {
+  return apiFetch('/api/products', {
+    method: 'POST',
+    body: JSON.stringify({
+      name,
+      unit,
+      category,
+      description,
+      price: Number(price) || 0,
+      branch_id: branchId || null
+    })
+  });
+}
+
+
+/**
  * Updates product price for a specific customer tier.
  */
 export async function upsertProductPrice(productId, customerType, price) {
