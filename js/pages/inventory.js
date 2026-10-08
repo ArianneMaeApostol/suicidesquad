@@ -131,7 +131,9 @@ function setupStockMovementModal() {
         item_id: itemId,
         branch_id: activeBranchId,
         type: movementType,
+        qty,
         quantity: qty,
+        note: notes || null,
         notes: notes || null
       });
 
@@ -144,7 +146,7 @@ function setupStockMovementModal() {
 
       showToast(`Stock ${movementType.toUpperCase()} of ${qty} units recorded!`, 'success');
       form.reset();
-      closeModal();
+      closeModal(modal);
       loadInventoryTable();
     });
   }

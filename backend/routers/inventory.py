@@ -35,11 +35,13 @@ class SupplierIn(BaseModel):
 
 
 class StockMovementIn(BaseModel):
-    branch_id: str
+    branch_id: Optional[str] = None
     item_id: str
     type: str  # "in" | "out" | "adjustment"
-    qty: float
+    qty: Optional[float] = None
+    quantity: Optional[float] = None
     note: Optional[str] = None
+    notes: Optional[str] = None
 
 
 @router.get("")
@@ -127,15 +129,19 @@ async def record_movement(
     if not item:
         raise HTTPException(status_code=404, detail="Inventory item not found")
 
+    branch_id = body.branch_id or item.get("branch_id") or current_user.get("branch_id")
+    quantity = body.qty if body.qty is not None else (body.quantity if body.quantity is not None else 0.0)
+    note = body.note if body.note is not None else (body.notes or "")
+
     m_query = """
         INSERT INTO inventory_movements (branch_id, item_id, type, qty, note)
         VALUES ($1, $2, $3, $4, $5)
         RETURNING *
     """
-    await db.fetch_one(m_query, body.branch_id, body.item_id, body.type, body.qty, body.note)
+    await db.fetch_one(m_query, branch_id, body.item_id, body.type, quantity, note)
 
     # Adjust stock
-    delta = body.qty if body.type == "in" else -body.qty
+    delta = quantity if body.type == "in" else -quantity
     u_query = """
         UPDATE inventory_items
         SET quantity = GREATEST(quantity + $2, 0), updated_at = NOW()
