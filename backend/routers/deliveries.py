@@ -261,15 +261,19 @@ async def list_riders(
     current_user: dict = Depends(get_current_user),
 ):
     bid = branch_id or current_user.get("branch_id")
+    riders = []
     if bid and current_user["role"] != "owner":
         query = "SELECT id, full_name, phone FROM users WHERE role = 'rider' AND is_active = TRUE AND (branch_id = $1 OR branch_id IS NULL) ORDER BY full_name ASC"
-        return await db.fetch_all(query, str(bid))
+        riders = await db.fetch_all(query, str(bid))
     elif branch_id:
         query = "SELECT id, full_name, phone FROM users WHERE role = 'rider' AND is_active = TRUE AND (branch_id = $1 OR branch_id IS NULL) ORDER BY full_name ASC"
-        return await db.fetch_all(query, str(branch_id))
-    else:
+        riders = await db.fetch_all(query, str(branch_id))
+
+    if not riders:
         query = "SELECT id, full_name, phone FROM users WHERE role = 'rider' AND is_active = TRUE ORDER BY full_name ASC"
-        return await db.fetch_all(query)
+        riders = await db.fetch_all(query)
+
+    return riders
 
 
 @router.get("/stream")

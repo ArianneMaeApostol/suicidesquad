@@ -150,12 +150,16 @@
         <div style="display: flex; gap: var(--space-4); margin-bottom: var(--space-5); flex-wrap: wrap; align-items: center;">
           <div style="display: flex; gap: var(--space-2); align-items: center; flex-wrap: wrap;" id="active-riders-container">
             <span style="font-size: 0.82rem; font-weight: 600; color: var(--text-muted);">Active Riders:</span>
-            <span class="badge badge-neutral">Loading riders...</span>
+            <span class="badge badge-neutral">Active Riders</span>
           </div>
-          <div style="margin-left: auto; display: flex; gap: var(--space-2);">
+          <div style="margin-left: auto; display: flex; gap: var(--space-2); align-items: center;">
             <select id="barangay-filter" class="form-control" style="font-size: 0.8rem; padding: 6px 12px; width: 180px;">
               <option value="all">All Barangays</option>
             </select>
+            <button type="button" id="btn-refresh-deliveries" class="btn btn-secondary" style="font-size: 0.8rem; padding: 6px 12px; display: inline-flex; align-items: center; gap: 4px;" title="Refresh Dispatch Board">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+              <span>Refresh</span>
+            </button>
           </div>
         </div>
 
@@ -233,8 +237,9 @@
           <div class="form-group">
             <label class="form-label" for="del-cust">Select Customer <span class="required">*</span></label>
             <select id="del-cust" class="form-control" required>
-              <option value="">Loading customer accounts...</option>
+              <option value="" disabled selected>Select customer account...</option>
             </select>
+            <div id="del-cust-details" style="font-size: 0.78rem; color: var(--text-muted); margin-top: 4px; display: none;"></div>
           </div>
 
           <div class="form-grid">
@@ -263,10 +268,22 @@
             <label class="form-label" for="del-notes">Delivery Notes / Landmark (Optional)</label>
             <input type="text" id="del-notes" class="form-control" placeholder="e.g. Near Brgy hall gate, bring change for ₱500">
           </div>
+
+          <!-- LIVE TRIP SUMMARY & ESTIMATED AMOUNT -->
+          <div id="del-trip-summary" style="background: var(--bg-surface-alt, #f8fafc); border: 1px solid var(--border-color, #e2e8f0); border-radius: var(--radius-md, 8px); padding: 12px; margin-top: 8px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+              <span style="font-size: 0.8rem; color: var(--text-muted);">Estimated Amount:</span>
+              <strong id="del-calc-total" style="font-size: 1.15rem; color: var(--primary);">₱140.00</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.76rem; color: var(--text-muted);">
+              <span id="del-calc-breakdown">5 gals &times; ₱28.00 / gal</span>
+              <span id="del-calc-dest">Destination: Station Area</span>
+            </div>
+          </div>
         </div>
         <div class="modal-footer">
           <a href="#" class="btn btn-secondary" data-action="close-delivery-modal">Cancel</a>
-          <button type="submit" class="btn btn-primary">Dispatch Trip</button>
+          <button type="submit" class="btn btn-primary" id="del-submit-btn">Dispatch Trip</button>
         </div>
       </form>
     </div>

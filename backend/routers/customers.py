@@ -66,7 +66,7 @@ async def list_customers(
     if current_user["role"] != "owner":
         bid = current_user.get("branch_id")
         if bid:
-            conditions.append(f"branch_id = ${idx}")
+            conditions.append(f"(branch_id = ${idx} OR branch_id IS NULL)")
             params.append(str(bid))
             idx += 1
 
