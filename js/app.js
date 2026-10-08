@@ -5,7 +5,7 @@
  * handles role-based navigation visibility, and lazy-loads the page module.
  */
 import { requireAuth, getSession, getCurrentProfile, signOut, setupAuthListener, getHomeUrlForRole } from './auth.js';
-import { getBranches, resolveBranchId } from './api.js';
+import { getBranches, resolveBranchId, getDeliveries } from './api.js';
 import { getStoredBranchId, setStoredBranchId } from './config.js';
 import { showToast, escapeHTML } from './ui.js';
 
@@ -69,11 +69,50 @@ async function bootstrap() {
   // Filter sidebar navigation by role
   filterNavigation(profile.role);
 
+  // Hydrate global deliveries badge with real active count
+  hydrateSidebarDeliveriesBadge(profile);
+
+  // Listen for cross-component deliveries updates
+  window.addEventListener('deliveries-updated', () => {
+    hydrateSidebarDeliveriesBadge(profile);
+  });
+
   // Bind logout actions
   bindLogoutActions();
 
   // Load and initialize the page-specific controller
   loadPageModule(page, { profile, session });
+}
+
+/**
+ * Hydrates the Deliveries sidebar badge with the real active count.
+ * @param {object|null} userProfile
+ */
+export async function hydrateSidebarDeliveriesBadge(userProfile = null) {
+  const badge = document.querySelector('.nav-link[href="deliveries.html"] .nav-badge, #sidebar-deliveries-badge');
+  if (!badge) return;
+
+  try {
+    const profile = userProfile || (await getCurrentProfile());
+    const branchId = await resolveBranchId();
+    const riderId = profile?.role === 'rider' ? profile.id : null;
+    const { data: orders, error } = await getDeliveries({ branchId, riderId });
+
+    if (error) {
+      console.warn('Failed to fetch deliveries for sidebar badge:', error);
+      return;
+    }
+
+    const list = Array.isArray(orders) ? orders : [];
+    const activeCount = list.filter(
+      (d) => d.status === 'pending' || d.status === 'assigned' || d.status === 'out_for_delivery'
+    ).length;
+
+    badge.textContent = activeCount;
+    badge.className = `nav-badge ${activeCount > 0 ? 'danger' : 'neutral'}`;
+  } catch (err) {
+    console.warn('Failed to hydrate deliveries badge:', err);
+  }
 }
 
 /**

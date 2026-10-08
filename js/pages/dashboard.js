@@ -54,7 +54,17 @@ async function loadKpiMetrics(branchId) {
     // KPI 3: Pending Deliveries
     const delivEl = document.querySelector('[data-kpi="deliveries-val"]') || document.querySelectorAll('.kpi-value')[2];
     if (delivEl) {
-      delivEl.innerHTML = `${metrics.pendingDeliveries} <span style="font-size: 1rem; font-weight: 500; color: var(--text-muted);">orders</span>`;
+      delivEl.innerHTML = `${metrics.pendingDeliveries || 0} <span style="font-size: 1rem; font-weight: 500; color: var(--text-muted);">orders</span>`;
+      const delivCard = delivEl.closest('.kpi-card');
+      if (delivCard && (metrics.outForDeliveryCount !== undefined || metrics.queuedDeliveries !== undefined)) {
+        const bottom = delivCard.querySelector('.kpi-bottom');
+        if (bottom) {
+          bottom.innerHTML = `
+            <span class="badge badge-warning" data-kpi="deliveries-out">${metrics.outForDeliveryCount || 0} Out with Riders</span>
+            <span style="color: var(--text-muted); margin-left: auto;" data-kpi="deliveries-queued">${metrics.queuedDeliveries || 0} Queued</span>
+          `;
+        }
+      }
     }
 
     // KPI 4: Outstanding Customer Balances

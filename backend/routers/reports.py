@@ -101,15 +101,29 @@ async def get_dashboard_metrics(
     # 1. Pending deliveries
     deliv_params = []
     deliv_where = "WHERE status IN ('pending', 'assigned', 'out_for_delivery')"
+    out_where = "WHERE status = 'out_for_delivery'"
+    queued_where = "WHERE status IN ('pending', 'assigned')"
     if bid and current_user["role"] != "owner":
         deliv_where += " AND branch_id = $1"
+        out_where += " AND branch_id = $1"
+        queued_where += " AND branch_id = $1"
         deliv_params.append(str(bid))
     elif branch_id:
         deliv_where += " AND branch_id = $1"
+        out_where += " AND branch_id = $1"
+        queued_where += " AND branch_id = $1"
         deliv_params.append(str(branch_id))
 
     pending_count = await db.fetch_val(
         f"SELECT COUNT(*) FROM delivery_orders {deliv_where}",
+        *deliv_params
+    ) or 0
+    out_count = await db.fetch_val(
+        f"SELECT COUNT(*) FROM delivery_orders {out_where}",
+        *deliv_params
+    ) or 0
+    queued_count = await db.fetch_val(
+        f"SELECT COUNT(*) FROM delivery_orders {queued_where}",
         *deliv_params
     ) or 0
 
@@ -130,6 +144,8 @@ async def get_dashboard_metrics(
 
     return {
         "pendingDeliveries": int(pending_count),
+        "outForDeliveryCount": int(out_count),
+        "queuedDeliveries": int(queued_count),
         "totalBalance": float(cust_stats["total_balance"]) if cust_stats else 0.0,
         "customersWithBalance": int(cust_stats["with_balance"]) if cust_stats else 0,
     }

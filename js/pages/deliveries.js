@@ -314,7 +314,7 @@ function setupRefreshButton(riderFilterId) {
 }
 
 function updateSidebarBadge() {
-  const badge = document.querySelector('.nav-link[href="deliveries.html"] .nav-badge');
+  const badge = document.querySelector('.nav-link[href="deliveries.html"] .nav-badge, #sidebar-deliveries-badge');
   if (!badge) return;
 
   const activeCount = deliveriesList.filter(
