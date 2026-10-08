@@ -148,18 +148,13 @@
 
         <!-- DISPATCH TOOLBAR -->
         <div style="display: flex; gap: var(--space-4); margin-bottom: var(--space-5); flex-wrap: wrap; align-items: center;">
-          <div style="display: flex; gap: var(--space-2); align-items: center;">
+          <div style="display: flex; gap: var(--space-2); align-items: center; flex-wrap: wrap;" id="active-riders-container">
             <span style="font-size: 0.82rem; font-weight: 600; color: var(--text-muted);">Active Riders:</span>
-            <span class="badge badge-success">Arlene Magbanua (Trike #1)</span>
-            <span class="badge badge-success">Junjun Ramos (Motor #2)</span>
-            <span class="badge badge-neutral">Kuya Bert (Standby)</span>
+            <span class="badge badge-neutral">Loading riders...</span>
           </div>
           <div style="margin-left: auto; display: flex; gap: var(--space-2);">
-            <select class="form-control" style="font-size: 0.8rem; padding: 6px 12px; width: 170px;">
-              <option>All Barangays</option>
-              <option>San Antonio</option>
-              <option>Kapasigan</option>
-              <option>Caniogan</option>
+            <select id="barangay-filter" class="form-control" style="font-size: 0.8rem; padding: 6px 12px; width: 180px;">
+              <option value="all">All Barangays</option>
             </select>
           </div>
         </div>
@@ -171,50 +166,12 @@
             <div class="kanban-header">
               <span class="kanban-title">
                 <span class="badge-dot" style="background-color: var(--slate-400);"></span>
-                <span>Pending Orders (6)</span>
+                <span>Pending Orders (0)</span>
               </span>
               <span class="badge badge-neutral">Queued</span>
             </div>
-            <div class="kanban-cards">
-              <!-- Card 1 -->
-              <div class="kanban-card">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                  <span class="delivery-id-tag">#DEL-304</span>
-                  <span style="font-size: 0.72rem; color: var(--text-muted);">10 mins ago</span>
-                </div>
-                <div class="delivery-customer">Pasig City Hall Canteen</div>
-                <div class="delivery-address">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                  <span>San Nicolas, Caruncho Ave</span>
-                </div>
-                <div style="font-size: 0.8rem; margin-bottom: 6px;">
-                  <strong>20x</strong> 5-Gal Slim Purified
-                </div>
-                <div class="delivery-footer">
-                  <span class="badge badge-info">Commercial Account</span>
-                  <strong style="color: var(--primary);">₱700.00</strong>
-                </div>
-              </div>
-
-              <!-- Card 2 -->
-              <div class="kanban-card">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                  <span class="delivery-id-tag">#DEL-305</span>
-                  <span style="font-size: 0.72rem; color: var(--text-muted);">25 mins ago</span>
-                </div>
-                <div class="delivery-customer">Atty. Manuel Roxas</div>
-                <div class="delivery-address">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                  <span>Valle Verde 2, Brgy. Ugong</span>
-                </div>
-                <div style="font-size: 0.8rem; margin-bottom: 6px;">
-                  <strong>4x</strong> Alkaline 5-Gal
-                </div>
-                <div class="delivery-footer">
-                  <span class="badge badge-success">Paid via GCash</span>
-                  <strong style="color: var(--primary);">₱200.00</strong>
-                </div>
-              </div>
+            <div class="kanban-cards" data-col="pending">
+              <div style="text-align: center; color: var(--text-muted); font-size: 0.78rem; padding: 24px 8px;">Loading orders...</div>
             </div>
           </div>
 
@@ -223,33 +180,12 @@
             <div class="kanban-header">
               <span class="kanban-title">
                 <span class="badge-dot" style="background-color: var(--warning);"></span>
-                <span>Assigned to Rider (4)</span>
+                <span>Assigned to Rider (0)</span>
               </span>
               <span class="badge badge-warning">Staging</span>
             </div>
-            <div class="kanban-cards">
-              <!-- Card 3 -->
-              <div class="kanban-card">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                  <span class="delivery-id-tag">#DEL-302</span>
-                  <span style="font-size: 0.72rem; color: var(--text-muted);">Loading bottles</span>
-                </div>
-                <div class="delivery-customer">Aling Nena's Bakery</div>
-                <div class="delivery-address">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                  <span>#15 A. Luna St., Caniogan</span>
-                </div>
-                <div style="font-size: 0.8rem; margin-bottom: 6px;">
-                  <strong>6x</strong> 5-Gal Slim Refill
-                </div>
-                <div style="background-color: var(--bg-surface-alt); padding: 4px 8px; border-radius: var(--radius-sm); font-size: 0.75rem; margin-bottom: 6px;">
-                  Rider: <strong>Junjun Ramos</strong> (Motor #2)
-                </div>
-                <div class="delivery-footer">
-                  <span class="badge badge-neutral">COD Cash</span>
-                  <strong style="color: var(--primary);">₱210.00</strong>
-                </div>
-              </div>
+            <div class="kanban-cards" data-col="assigned">
+              <div style="text-align: center; color: var(--text-muted); font-size: 0.78rem; padding: 24px 8px;">Loading orders...</div>
             </div>
           </div>
 
@@ -258,33 +194,12 @@
             <div class="kanban-header">
               <span class="kanban-title">
                 <span class="badge-dot" style="background-color: var(--primary);"></span>
-                <span>Out for Delivery (4)</span>
+                <span>Out for Delivery (0)</span>
               </span>
               <span class="badge badge-primary">On Route</span>
             </div>
-            <div class="kanban-cards">
-              <!-- Card 4 -->
-              <div class="kanban-card" style="border-left: 3px solid var(--primary);">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                  <span class="delivery-id-tag">#DEL-301</span>
-                  <span class="badge badge-primary">Dispatched 09:10</span>
-                </div>
-                <div class="delivery-customer">Mang Juan's Sari-Sari Store</div>
-                <div class="delivery-address">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                  <span>#42 Mabini St., Kapasigan</span>
-                </div>
-                <div style="font-size: 0.8rem; margin-bottom: 6px;">
-                  <strong>15x</strong> Slim Containers Refill
-                </div>
-                <div style="background-color: var(--primary-tint); padding: 4px 8px; border-radius: var(--radius-sm); font-size: 0.75rem; margin-bottom: 6px; color: var(--primary-dark);">
-                  Rider: <strong>Arlene Magbanua</strong> (Trike #1)
-                </div>
-                <div class="delivery-footer">
-                  <span class="badge badge-warning">Credit / Utang</span>
-                  <strong style="color: var(--danger);">₱525.00</strong>
-                </div>
-              </div>
+            <div class="kanban-cards" data-col="out_for_delivery">
+              <div style="text-align: center; color: var(--text-muted); font-size: 0.78rem; padding: 24px 8px;">Loading orders...</div>
             </div>
           </div>
 
@@ -293,30 +208,12 @@
             <div class="kanban-header">
               <span class="kanban-title">
                 <span class="badge-dot" style="background-color: var(--success);"></span>
-                <span>Delivered & Remitted (4)</span>
+                <span>Delivered & Remitted (0)</span>
               </span>
               <span class="badge badge-success">Completed</span>
             </div>
-            <div class="kanban-cards">
-              <!-- Card 5 -->
-              <div class="kanban-card" style="border-left: 3px solid var(--success);">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                  <span class="delivery-id-tag">#DEL-299</span>
-                  <span style="font-size: 0.72rem; color: var(--success); font-weight: 700;">Delivered 08:45 AM</span>
-                </div>
-                <div class="delivery-customer">Dr. Fernando Poe Memorial Clinic</div>
-                <div class="delivery-address">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                  <span>Pasig Boulevard, Bagong Ilog</span>
-                </div>
-                <div style="font-size: 0.8rem; margin-bottom: 6px;">
-                  <strong>8x</strong> 5-Gal Round Purified
-                </div>
-                <div class="delivery-footer">
-                  <span class="badge badge-success">Cash Remitted</span>
-                  <strong style="color: var(--success);">₱240.00</strong>
-                </div>
-              </div>
+            <div class="kanban-cards" data-col="delivered">
+              <div style="text-align: center; color: var(--text-muted); font-size: 0.78rem; padding: 24px 8px;">Loading orders...</div>
             </div>
           </div>
         </div>
@@ -329,29 +226,26 @@
     <div class="modal-card">
       <div class="modal-header">
         <h3 class="modal-title">Book New Delivery Trip</h3>
-        <a href="#" class="modal-close-btn">&times;</a>
+        <a href="#" class="modal-close-btn" data-action="close-delivery-modal">&times;</a>
       </div>
-      <form action="#" method="get">
+      <form id="new-delivery-form">
         <div class="modal-body">
           <div class="form-group">
             <label class="form-label" for="del-cust">Select Customer <span class="required">*</span></label>
             <select id="del-cust" class="form-control" required>
-              <option value="1">Mang Juan's Sari-Sari Store (#42 Mabini St., Kapasigan)</option>
-              <option value="2">Pasig City Hall Canteen (Caruncho Ave)</option>
-              <option value="3">Aling Nena's Bakery (A. Luna St., Caniogan)</option>
+              <option value="">Loading customer accounts...</option>
             </select>
           </div>
 
           <div class="form-grid">
             <div class="form-group">
-              <label class="form-label" for="del-qty">Slim 5-Gal Gallons</label>
-              <input type="number" id="del-qty" class="form-control" value="5" min="1">
+              <label class="form-label" for="del-qty">Slim 5-Gal Gallons <span class="required">*</span></label>
+              <input type="number" id="del-qty" class="form-control" value="5" min="1" step="1" required>
             </div>
             <div class="form-group">
               <label class="form-label" for="del-rider">Assign Rider Vehicle</label>
               <select id="del-rider" class="form-control">
-                <option value="1">Arlene Magbanua - Tricycle Sidecar #01</option>
-                <option value="2">Junjun Ramos - Motorcycle Rack #02</option>
+                <option value="">Unassigned (Queue in Pending)</option>
               </select>
             </div>
           </div>
@@ -364,9 +258,14 @@
               <option value="credit">Charge to Account / Utang</option>
             </select>
           </div>
+
+          <div class="form-group">
+            <label class="form-label" for="del-notes">Delivery Notes / Landmark (Optional)</label>
+            <input type="text" id="del-notes" class="form-control" placeholder="e.g. Near Brgy hall gate, bring change for ₱500">
+          </div>
         </div>
         <div class="modal-footer">
-          <a href="#" class="btn btn-secondary">Cancel</a>
+          <a href="#" class="btn btn-secondary" data-action="close-delivery-modal">Cancel</a>
           <button type="submit" class="btn btn-primary">Dispatch Trip</button>
         </div>
       </form>

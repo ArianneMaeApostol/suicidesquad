@@ -33,10 +33,18 @@ async def broadcast_delivery_event(event_type: str, data: dict):
 
 
 class CreateDeliveryIn(BaseModel):
-    branch_id: str
+    branch_id: Optional[str] = None
     customer_id: str
     sale_id: Optional[str] = None
+    rider_id: Optional[str] = None
     address: Optional[str] = None
+    barangay: Optional[str] = None
+    gallons: Optional[int] = 5
+    slim_count: Optional[int] = 5
+    round_count: Optional[int] = 0
+    amount: Optional[float] = None
+    payment_method: Optional[str] = "cash"
+    is_paid: Optional[bool] = False
     notes: Optional[str] = None
 
 
@@ -46,7 +54,7 @@ class StatusUpdateIn(BaseModel):
 
 
 class AssignRiderIn(BaseModel):
-    rider_id: str
+    rider_id: Optional[str] = None
 
 
 @router.get("")
@@ -110,22 +118,52 @@ async def create_delivery(
     db: Database = Depends(get_db),
     current_user: dict = Depends(get_current_user),
 ):
+    bid = await db.resolve_branch(body.branch_id, current_user)
     cust = await db.fetch_one("SELECT * FROM customers WHERE id = $1", body.customer_id)
     cust_addr = body.address or (cust.get("address", "") if cust else "")
-    cust_brgy = cust.get("barangay", "") if cust else ""
+    cust_brgy = body.barangay or (cust.get("barangay", "") if cust else "")
+    cust_type = cust.get("type", "regular") if cust else "regular"
+
+    gallons = body.gallons or body.slim_count or 5
+    amount = body.amount
+    if amount is None or amount <= 0:
+        tier_prices = {"regular": 28.0, "reseller": 22.0, "commercial": 25.0, "walk_in": 30.0}
+        unit_price = tier_prices.get(cust_type, 28.0)
+        amount = gallons * unit_price
+
+    pay_method = (body.payment_method or "cash").lower()
+    is_paid = True if pay_method == "gcash" else bool(body.is_paid)
+    delivery_status = "assigned" if body.rider_id else "pending"
 
     query = """
         INSERT INTO delivery_orders (
-            branch_id, customer_id, sale_id, status, delivery_address,
-            barangay, notes
+            branch_id, customer_id, sale_id, rider_id, status, delivery_address,
+            barangay, gallons, slim_count, round_count, amount, payment_method,
+            is_paid, notes
         )
-        VALUES ($1, $2, $3, 'pending', $4, $5, $6)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
         RETURNING *
     """
     created = await db.fetch_one(
         query,
-        body.branch_id, body.customer_id, body.sale_id, cust_addr, cust_brgy, body.notes
+        str(bid) if bid else None, body.customer_id, body.sale_id, body.rider_id,
+        delivery_status, cust_addr, cust_brgy, gallons, body.slim_count or gallons,
+        body.round_count or 0, float(amount), pay_method, is_paid, body.notes
     )
+
+    rider = await db.fetch_one("SELECT full_name FROM users WHERE id = $1", body.rider_id) if body.rider_id else None
+    created["customer_name"] = cust.get("full_name") if cust else "Customer"
+    created["rider_name"] = rider.get("full_name") if rider else "Unassigned"
+    created["customers"] = {
+        "full_name": cust.get("full_name") if cust else "Customer",
+        "phone": cust.get("phone", "") if cust else "",
+        "address": cust_addr,
+        "barangay": cust_brgy
+    }
+    created["rider"] = {
+        "full_name": rider.get("full_name") if rider else "Unassigned"
+    }
+
     await broadcast_delivery_event("created", created)
     return created
 
@@ -147,17 +185,27 @@ async def update_delivery_status(
 
     dispatched = "NOW()" if body.status == "out_for_delivery" else "dispatched_at"
     delivered = "NOW()" if body.status == "delivered" else "delivered_at"
+    is_paid_sql = "TRUE" if (body.status == "delivered" and deliv.get("payment_method") in ("cash", "cod")) else "is_paid"
 
     query = f"""
         UPDATE delivery_orders
         SET status = $2,
             notes = COALESCE($3, notes),
+            is_paid = {is_paid_sql},
             dispatched_at = {dispatched},
             delivered_at = {delivered}
         WHERE id = $1
         RETURNING *
     """
     updated = await db.fetch_one(query, delivery_id, body.status, body.notes)
+
+    cust = await db.fetch_one("SELECT full_name, phone, address, barangay FROM customers WHERE id = $1", updated["customer_id"]) if updated.get("customer_id") else None
+    rider = await db.fetch_one("SELECT full_name FROM users WHERE id = $1", updated["rider_id"]) if updated.get("rider_id") else None
+    updated["customer_name"] = cust.get("full_name") if cust else ""
+    updated["rider_name"] = rider.get("full_name") if rider else "Unassigned"
+    updated["customers"] = cust or {}
+    updated["rider"] = {"full_name": updated["rider_name"]}
+
     await broadcast_delivery_event("status_changed", updated)
     return updated
 
@@ -169,20 +217,38 @@ async def assign_rider(
     db: Database = Depends(get_db),
     current_user: dict = Depends(get_current_user),
 ):
-    rider = await db.fetch_one("SELECT * FROM users WHERE id = $1 AND role = 'rider'", body.rider_id)
-    if not rider:
-        raise HTTPException(status_code=404, detail="Rider not found")
+    if not body.rider_id:
+        query = """
+            UPDATE delivery_orders
+            SET rider_id = NULL,
+                status = CASE WHEN status = 'assigned' THEN 'pending' ELSE status END
+            WHERE id = $1
+            RETURNING *
+        """
+        updated = await db.fetch_one(query, delivery_id)
+    else:
+        rider = await db.fetch_one("SELECT * FROM users WHERE id = $1 AND role = 'rider'", body.rider_id)
+        if not rider:
+            raise HTTPException(status_code=404, detail="Rider not found")
 
-    query = """
-        UPDATE delivery_orders
-        SET rider_id = $2,
-            status = CASE WHEN status = 'pending' THEN 'assigned' ELSE status END
-        WHERE id = $1
-        RETURNING *
-    """
-    updated = await db.fetch_one(query, delivery_id, body.rider_id)
+        query = """
+            UPDATE delivery_orders
+            SET rider_id = $2,
+                status = CASE WHEN status = 'pending' THEN 'assigned' ELSE status END
+            WHERE id = $1
+            RETURNING *
+        """
+        updated = await db.fetch_one(query, delivery_id, body.rider_id)
+
     if not updated:
         raise HTTPException(status_code=404, detail="Delivery order not found")
+
+    cust = await db.fetch_one("SELECT full_name, phone, address, barangay FROM customers WHERE id = $1", updated["customer_id"]) if updated.get("customer_id") else None
+    rider = await db.fetch_one("SELECT full_name FROM users WHERE id = $1", updated["rider_id"]) if updated.get("rider_id") else None
+    updated["customer_name"] = cust.get("full_name") if cust else ""
+    updated["rider_name"] = rider.get("full_name") if rider else "Unassigned"
+    updated["customers"] = cust or {}
+    updated["rider"] = {"full_name": updated["rider_name"]}
 
     await broadcast_delivery_event("assigned", updated)
     return updated
@@ -196,13 +262,13 @@ async def list_riders(
 ):
     bid = branch_id or current_user.get("branch_id")
     if bid and current_user["role"] != "owner":
-        query = "SELECT id, full_name, phone FROM users WHERE role = 'rider' AND is_active = TRUE AND branch_id = $1"
+        query = "SELECT id, full_name, phone FROM users WHERE role = 'rider' AND is_active = TRUE AND (branch_id = $1 OR branch_id IS NULL) ORDER BY full_name ASC"
         return await db.fetch_all(query, str(bid))
     elif branch_id:
-        query = "SELECT id, full_name, phone FROM users WHERE role = 'rider' AND is_active = TRUE AND branch_id = $1"
+        query = "SELECT id, full_name, phone FROM users WHERE role = 'rider' AND is_active = TRUE AND (branch_id = $1 OR branch_id IS NULL) ORDER BY full_name ASC"
         return await db.fetch_all(query, str(branch_id))
     else:
-        query = "SELECT id, full_name, phone FROM users WHERE role = 'rider' AND is_active = TRUE"
+        query = "SELECT id, full_name, phone FROM users WHERE role = 'rider' AND is_active = TRUE ORDER BY full_name ASC"
         return await db.fetch_all(query)
 
 

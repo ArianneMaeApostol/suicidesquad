@@ -100,6 +100,16 @@ async def seed():
         RETURNING id;
     """, b1_id, pw)
 
+    await conn.execute("""
+        INSERT INTO users (branch_id, email, password_hash, full_name, role, phone, is_active)
+        VALUES ($1, 'arlene.magbanua@aquaflow.ph', $2, 'Arlene Magbanua', 'rider', '+63 918 333 1111', TRUE)
+    """, b1_id, pw)
+
+    await conn.execute("""
+        INSERT INTO users (branch_id, email, password_hash, full_name, role, phone, is_active)
+        VALUES ($1, 'junjun.ramos@aquaflow.ph', $2, 'Junjun Ramos', 'rider', '+63 919 444 2222', TRUE)
+    """, b1_id, pw)
+
     # 4. Products & Price Tiers
     print("Creating products and tier prices...")
     p1_id = await conn.fetchval("""

@@ -15,7 +15,7 @@ import { showToast, escapeHTML } from './ui.js';
 const PAGE_PERMISSIONS = {
   dashboard: ['owner', 'manager', 'cashier'],
   pos: ['owner', 'manager', 'cashier'],
-  deliveries: ['owner', 'manager', 'rider'],
+  deliveries: ['owner', 'manager', 'cashier', 'rider'],
   customers: ['owner', 'manager', 'cashier'],
   'customer-profile': ['owner', 'manager', 'cashier'],
   inventory: ['owner', 'manager', 'cashier'],

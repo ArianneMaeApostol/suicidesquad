@@ -407,6 +407,16 @@ export async function getRiders(branchId) {
 }
 
 /**
+ * Creates a new delivery trip / order.
+ */
+export async function createDelivery(data) {
+  return apiFetch('/api/deliveries', {
+    method: 'POST',
+    body: JSON.stringify(data)
+  });
+}
+
+/**
  * Assigns a delivery order to a rider.
  */
 export async function assignDeliveryRider(deliveryId, riderId) {
