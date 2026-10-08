@@ -3,13 +3,23 @@
  * FastAPI backend configuration, endpoint base URL, and local storage tokens.
  */
 
-// Base URL for Python FastAPI server (supports cloud backend or localhost)
+function getLocalApiBase() {
+  if (typeof window === 'undefined') return 'http://localhost:8000';
+  const h = window.location.hostname;
+  const isLocal =
+    h === 'localhost' ||
+    h === '127.0.0.1' ||
+    /^192\.168\./.test(h) ||
+    /^10\./.test(h) ||
+    /^172\.(1[6-9]|2[0-9]|3[0-1])\./.test(h);
+  return isLocal ? `http://${h}:8000` : 'https://suicidesquad.onrender.com';
+}
+
+// Base URL for Python FastAPI server (supports LAN WiFi devices, Docker, cloud, or localhost)
 export const API_BASE_URL =
   window.__API_BASE_URL__ ||
   localStorage.getItem('wrsms_api_url') ||
-  (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-    ? 'http://localhost:8000'
-    : 'https://suicidesquad.onrender.com');
+  getLocalApiBase();
 
 export const TOKEN_STORAGE_KEY = 'wrsms_token';
 export const USER_STORAGE_KEY = 'wrsms_user';
