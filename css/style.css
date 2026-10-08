@@ -437,6 +437,25 @@ button {
   text-overflow: ellipsis;
 }
 
+.sidebar-user [data-action="logout"],
+.sidebar-user a[title="Sign Out"] {
+  color: var(--slate-400);
+  padding: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.sidebar-user [data-action="logout"]:hover,
+.sidebar-user a[title="Sign Out"]:hover {
+  color: var(--danger);
+  background-color: rgba(239, 68, 68, 0.15);
+}
+
 /* APP BODY WRAPPER */
 .app-main {
   flex: 1;
@@ -582,6 +601,12 @@ body:has(#theme-toggle:checked) .theme-toggle-label .moon-icon { display: block;
 .topbar-action-btn:hover {
   background-color: var(--primary-tint);
   color: var(--primary);
+}
+
+.topbar-action-btn[data-action="logout"]:hover {
+  background-color: rgba(239, 68, 68, 0.12);
+  color: var(--danger);
+  border-color: rgba(239, 68, 68, 0.3);
 }
 
 .topbar-action-btn svg {
